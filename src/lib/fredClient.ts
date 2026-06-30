@@ -11,9 +11,22 @@ type FredLinePoint = LinePoint & {
   date: string;
 };
 
-const fredCsvUrl = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500";
+type FredObservation = {
+  date: string;
+  value: string;
+};
+
+type FredObservationResponse = {
+  observations?: FredObservation[];
+  error_code?: number;
+  error_message?: string;
+};
+
+const fredApiUrl = "https://api.stlouisfed.org/fred/series/observations";
+const fredSeriesId = "SP500";
 const fredStartDate = "2016-01-01";
 const fredCacheTtlMs = 30 * 60 * 1000;
+const fredTimeoutMs = 10000;
 const fredCache = new Map<string, FredCacheEntry>();
 
 function formatDateLabel(value: string) {
@@ -22,14 +35,26 @@ function formatDateLabel(value: string) {
   return `${Number(month)}/${Number(day)}`;
 }
 
-function parseFredCsv(csv: string): FredLinePoint[] {
-  return csv
-    .trim()
-    .split(/\r?\n/)
-    .slice(1)
-    .map((line) => {
-      const [date, rawValue] = line.split(",");
-      const normalizedValue = rawValue?.trim();
+function getFredApiKey() {
+  return process.env.FRED_API_KEY?.trim() ?? "";
+}
+
+function createFredRequestUrl(apiKey: string) {
+  const url = new URL(fredApiUrl);
+
+  url.searchParams.set("api_key", apiKey);
+  url.searchParams.set("file_type", "json");
+  url.searchParams.set("observation_start", fredStartDate);
+  url.searchParams.set("series_id", fredSeriesId);
+
+  return url;
+}
+
+function parseFredObservations(payload: FredObservationResponse): FredLinePoint[] {
+  return (payload.observations ?? [])
+    .map((observation) => {
+      const date = observation.date;
+      const normalizedValue = observation.value?.trim();
 
       if (!date || !normalizedValue || normalizedValue === ".") {
         return null;
@@ -89,17 +114,30 @@ export async function hydrateMarketIndexWithFred(): Promise<MarketIndex | null> 
     return cached.data;
   }
 
+  const apiKey = getFredApiKey();
+
+  if (!apiKey) {
+    console.warn("FRED_API_KEY is not configured.");
+    return cached?.data ?? null;
+  }
+
   try {
-    const response = await fetch(fredCsvUrl, {
-      cache: "no-store"
+    const response = await fetch(createFredRequestUrl(apiKey), {
+      cache: "no-store",
+      signal: AbortSignal.timeout(fredTimeoutMs)
     });
 
     if (!response.ok) {
       throw new Error(`FRED request failed: ${response.status}`);
     }
 
-    const csv = await response.text();
-    const points = parseFredCsv(csv);
+    const payload = (await response.json()) as FredObservationResponse;
+
+    if (payload.error_code) {
+      throw new Error(`FRED API error: ${payload.error_code}`);
+    }
+
+    const points = parseFredObservations(payload);
     const data = createFredMarketIndex(points);
 
     if (!data) {
@@ -112,7 +150,11 @@ export async function hydrateMarketIndexWithFred(): Promise<MarketIndex | null> 
     });
 
     return data;
-  } catch {
+  } catch (error) {
+    console.warn(
+      "FRED API request failed.",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     return cached?.data ?? null;
   }
 }

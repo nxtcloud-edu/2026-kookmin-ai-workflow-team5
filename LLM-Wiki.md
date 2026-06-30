@@ -26,10 +26,10 @@
 
 ## API 연동 구성
 
-- `.env.local`에 Twelve Data API 키와 Alpha Vantage 백업 API 키를 설정
+- `.env.local`에 FRED, Twelve Data API 키와 Alpha Vantage 백업 API 키를 설정
 - `src/app/api/market/route.ts`: 메인 페이지용 시장/종목/뉴스 데이터 조회
 - `src/app/api/stocks/[symbol]/route.ts`: 종목 상세 데이터 조회
-- `src/lib/fredClient.ts`: FRED CSV `SP500` 기반 S&P 500 일별 종가를 2016-01-01 이후로 조회
+- `src/lib/fredClient.ts`: FRED 공식 API `SP500` 기반 S&P 500 일별 종가를 2016-01-01 이후로 조회
 - `src/lib/twelveDataClient.ts`: Twelve Data `time_series` 기반 2016-01-01 이후 일봉 OHLC 1차 조회
 - `src/lib/alphaVantageClient.ts`: Alpha Vantage `TIME_SERIES_DAILY` 기반 2016-01-01 이후 일봉 OHLC 백업 조회
 - `src/lib/news.ts`: Google News RSS 조회와 RSS XML 파싱
@@ -37,6 +37,7 @@
 - `src/lib/marketService.ts`: 실데이터와 캐시를 합성하고 실패 항목은 숨김
 - 클라이언트 컴포넌트는 1분 간격으로 API route를 다시 호출
 - FRED S&P 500 종가는 서버 메모리에 30분 캐시
+- Vercel production에서는 `FRED_API_KEY` 기반 공식 FRED API로 S&P 500 지수를 조회
 - Twelve Data 일봉 OHLC는 서버 메모리에 6시간 성공 캐시
 - Twelve Data 실패 응답은 종목별 1시간 쿨다운 후 Alpha Vantage 백업 확인
 - Alpha Vantage 일봉 OHLC는 서버 메모리에 6시간 성공 캐시
@@ -97,6 +98,7 @@ cp .env.example .env.local
 - `npm run lint` 통과
 - `npm run build` 통과
 - FRED CSV `SP500` 응답 `200` 확인
+- Vercel production `https://sigebert111-boot-charting.vercel.app/api/market` 응답 `200`, `indexCode: FRED:SP500`, 지수 포인트 2512개 확인
 - 기존 `localhost:3000`의 `/api/market` 응답에서 `indexCode: FRED:SP500`, 지수 포인트 40개 확인
 - loading/error 전환 후 기존 `localhost:3000`의 `/api/market` 응답에서 `source: partial`, `indexCode: FRED:SP500`, 실패 종목 숨김 확인
 - 기존 `localhost:3000`의 `/api/stocks/AAPL` 응답에서 Alpha Vantage 실패 시 `503`과 오류 메시지 확인
