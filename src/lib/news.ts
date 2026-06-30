@@ -1,5 +1,5 @@
 import type { NewsItem } from "./mockData";
-import { analyzeNews } from "./groq";
+import { analyzeNews, detectTopicAndAnalyze } from "./groq";
 
 function decodeEntities(text: string): string {
   return text
@@ -43,12 +43,9 @@ function parseRSS(xml: string, prefix: string): NewsItem[] {
 
     if (!title) continue;
 
-    const pubDateObj = pubDate ? new Date(pubDate) : new Date();
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 10);
-    if (pubDateObj < cutoff) continue;
-
-    const date = pubDateObj.toISOString().split("T")[0];
+    const date = pubDate
+      ? new Date(pubDate).toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0];
 
     items.push({
       id: `${prefix}-${i++}`,
@@ -65,26 +62,41 @@ function parseRSS(xml: string, prefix: string): NewsItem[] {
   return items;
 }
 
-async function fetchGoogleNews(query: string, prefix: string): Promise<NewsItem[]> {
+async function fetchGoogleNewsRaw(query: string, prefix: string, limit = 20): Promise<NewsItem[]> {
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
   const res = await fetch(url, { next: { revalidate: 600 } });
   if (!res.ok) throw new Error(`Google News 요청 실패: ${query}`);
   const xml = await res.text();
-  const items = parseRSS(xml, prefix).slice(0, 6);
+  return parseRSS(xml, prefix).slice(0, limit);
+}
 
-  // Groq으로 호재/악재/중립 분류 + 요약
+// 체계적 위험: 넓게 수집 후 Groq이 현재 가장 중요한 이슈 감지 → 관련 기사 6개 선별 + 분석
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function fetchSystematicNews(_query?: string, prefix = "sys"): Promise<NewsItem[]> {
+  const broadItems = await fetchGoogleNewsRaw("economy stock market interest rates inflation currency", prefix, 20);
+  const { selectedIndices, results } = await detectTopicAndAnalyze(
+    broadItems.map((item) => ({ id: item.id, title: item.title }))
+  ).catch(() => ({ selectedIndices: [] as number[], results: new Map() }));
+
+  const validIndices = selectedIndices.filter((i) => i >= 0 && i < broadItems.length);
+  const selected = validIndices.length > 0
+    ? validIndices.map((i) => broadItems[i])
+    : broadItems.slice(0, 6);
+
+  return selected.map((item, idx) => {
+    const result = results.get(validIndices[idx] ?? idx);
+    if (!result) return item;
+    return { ...item, sentiment: result.sentiment, impact: result.impact, summary: result.summary };
+  });
+}
+
+// 비체계적 위험: 종목명으로 검색 후 Groq 분석
+export async function fetchUnsystematicNews(stockName: string, symbol = stockName): Promise<NewsItem[]> {
+  const items = await fetchGoogleNewsRaw(`${stockName} ${symbol} stock`, symbol, 6);
   const analysis = await analyzeNews(items.map((item) => ({ id: item.id, title: item.title }))).catch(() => new Map());
   return items.map((item) => {
     const result = analysis.get(item.id);
     if (!result) return item;
     return { ...item, sentiment: result.sentiment, impact: result.impact, summary: result.summary };
   });
-}
-
-export async function fetchSystematicNews(query = "S&P 500 interest rates dollar AI semiconductor", prefix = "sys"): Promise<NewsItem[]> {
-  return fetchGoogleNews(query, prefix);
-}
-
-export async function fetchUnsystematicNews(stockName: string, symbol = stockName): Promise<NewsItem[]> {
-  return fetchGoogleNews(`${stockName} ${symbol} stock`, symbol);
 }

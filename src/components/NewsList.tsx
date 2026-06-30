@@ -18,23 +18,27 @@ export function NewsList({ title, description, items }: NewsListProps) {
       </div>
 
       <div className="newsList">
-        {items.map((item) => (
-          <a
-            className="newsItem"
-            href={item.url}
-            key={item.id}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <div className="newsMeta">
-              <span className={`pill ${sentimentClass(item.sentiment)}`}>{item.impact}</span>
-              <span>{item.source}</span>
-              <span>{item.date}</span>
-            </div>
-            <h3>{item.title}</h3>
-            <p>{item.summary}</p>
-          </a>
-        ))}
+        {items.length === 0 ? (
+          <p className="newsLoading">뉴스를 불러오는 중입니다...</p>
+        ) : (
+          items.map((item) => (
+            <a
+              className="newsItem"
+              href={item.url}
+              key={item.id}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <div className="newsMeta">
+                <span className={`pill ${sentimentClass(item.sentiment)}`}>{item.impact}</span>
+                <span>{item.source}</span>
+                <span>{item.date}</span>
+              </div>
+              <h3>{item.title}</h3>
+              <p>{item.summary}</p>
+            </a>
+          ))
+        )}
       </div>
     </section>
   );

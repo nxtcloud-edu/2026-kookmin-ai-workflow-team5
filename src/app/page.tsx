@@ -5,7 +5,7 @@ import { marketIndex, stocks, systematicNews } from "@/lib/mockData";
 export default function Home() {
   const initialData: MarketPayload = {
     marketIndex,
-    systematicNews,
+    systematicNews: [],
     stocks,
     source: "mock",
     updatedAt: new Date().toISOString(),
