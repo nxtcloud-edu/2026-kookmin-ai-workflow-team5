@@ -29,7 +29,7 @@
 - `.env.local`에 Twelve Data API 키와 Alpha Vantage 백업 API 키를 설정
 - `src/app/api/market/route.ts`: 메인 페이지용 시장/종목/뉴스 데이터 조회
 - `src/app/api/stocks/[symbol]/route.ts`: 종목 상세 데이터 조회
-- `src/lib/fredClient.ts`: FRED CSV `SP500` 기반 S&P 500 일별 종가 조회
+- `src/lib/fredClient.ts`: FRED CSV `SP500` 기반 S&P 500 일별 종가를 2016-01-01 이후로 조회
 - `src/lib/twelveDataClient.ts`: Twelve Data `time_series` 기반 일봉 OHLC 1차 조회
 - `src/lib/alphaVantageClient.ts`: Alpha Vantage `TIME_SERIES_DAILY` 기반 일봉 OHLC 백업 조회
 - `src/lib/news.ts`: Google News RSS 조회와 RSS XML 파싱
@@ -57,7 +57,7 @@
 
 ## 화면 구조
 
-- `/`: FRED S&P 500 지수 선 그래프, 사각형 마커, 5일 이동평균선, 시장 공통 뉴스, 종목 카드 목록, `/api/market` 주기 조회
+- `/`: FRED S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, 줌/가로 스크롤 탐색, 시장 공통 뉴스, 종목 카드 목록, `/api/market` 주기 조회
 - `/stocks/[symbol]`: 선택 종목 봉차트와 3일 이동평균선, 추천 카드, SML/PER/RSI, 개별 뉴스, `/api/stocks/[symbol]` 주기 조회
 - `/loading.tsx`, `/stocks/[symbol]/loading.tsx`: 실데이터 조회 중 loading page 표시
 - `origin/feat/team5-member`의 Groq 뉴스 분석과 10일 뉴스 필터링 커밋을 반영하되, 추가 npm 패키지 없이 native `fetch` 기반 선택 호출로 통합
@@ -66,7 +66,7 @@
 
 - App Router 기반 Next.js 프로젝트 구조
 - 반응형 미니멀 대시보드 UI
-- SVG 기반 지수 선 그래프, 사각형 마커, 5일 이동평균선
+- SVG 기반 지수 장기 선 그래프, 사각형 마커, 이동평균선, 기간 선택, 줌 슬라이더, 가로 스크롤 탐색
 - SVG 기반 종목 봉차트 컴포넌트와 3일 이동평균선
 - 종목별 상세 라우팅
 - 클릭 가능한 뉴스 링크와 `noopener noreferrer` 적용

@@ -12,6 +12,7 @@ type FredLinePoint = LinePoint & {
 };
 
 const fredCsvUrl = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500";
+const fredStartDate = "2016-01-01";
 const fredCacheTtlMs = 30 * 60 * 1000;
 const fredCache = new Map<string, FredCacheEntry>();
 
@@ -47,7 +48,7 @@ function parseFredCsv(csv: string): FredLinePoint[] {
       };
     })
     .filter((point): point is FredLinePoint => Boolean(point))
-    .slice(-40);
+    .filter((point) => point.date >= fredStartDate);
 }
 
 function createFredMarketIndex(points: LinePoint[]): MarketIndex | null {
@@ -70,7 +71,7 @@ function createFredMarketIndex(points: LinePoint[]): MarketIndex | null {
     changePercent,
     updatedAt: latest.date ?? new Date().toLocaleString("ko-KR"),
     summary:
-      "FRED의 S&P 500 일별 종가를 기준으로 시장 전체 흐름을 보여줍니다. 발표용으로 1분마다 화면을 갱신하되 서버는 30분 캐시를 사용합니다.",
+      "FRED의 S&P 500 일별 종가를 2016년부터 현재까지 보여줍니다. 발표용으로 1분마다 화면을 갱신하되 서버는 30분 캐시를 사용합니다.",
     chart: points
   };
 }

@@ -278,6 +278,58 @@ p {
   white-space: nowrap;
 }
 
+.chartControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.segmentedControl {
+  display: inline-flex;
+  min-width: 0;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+}
+
+.segmentedControl button {
+  border: 0;
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.segmentedControl button.active {
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.zoomControl {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.zoomControl input {
+  width: 128px;
+  accent-color: var(--green);
+}
+
 .chartLegend {
   display: flex;
   flex-wrap: wrap;
@@ -335,6 +387,25 @@ p {
   width: 100%;
   margin-top: 18px;
   overflow: visible;
+}
+
+.chartScrollViewport {
+  margin-top: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 8px;
+  scrollbar-gutter: stable;
+  overscroll-behavior-x: contain;
+}
+
+.chartScrollViewport:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: 4px;
+}
+
+.chartScrollViewport .dataPointChart {
+  margin-top: 0;
+  min-width: 100%;
 }
 
 .candleChart .axis,
@@ -994,6 +1065,26 @@ p {
   .stockCard,
   .metricCard {
     border-radius: 8px;
+  }
+
+  .chartControls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .segmentedControl {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .zoomControl {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .zoomControl input {
+    flex: 1;
+    min-width: 120px;
   }
 
   .detailPrice {
