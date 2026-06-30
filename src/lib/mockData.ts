@@ -41,6 +41,11 @@ export type StockMetricSet = {
   rsi: {
     value: number;
   };
+  volume: {
+    individual: number;
+    institutional: number;
+    foreign: number;
+  };
 };
 
 export type Stock = {
@@ -191,11 +196,16 @@ export const stocks: Stock[] = [
       },
       rsi: {
         value: 57
+      },
+      volume: {
+        individual: 22,
+        institutional: 58,
+        foreign: 20
       }
     },
     highlights: {
-      positive: "서비스 매출과 자사주 매입",
-      negative: "하드웨어 교체 수요 둔화"
+      positive: "서비스 매출 확대 · 자사주 매입",
+      negative: "교체 수요 둔화 · 밸류에이션 부담"
     },
     news: [
       {
@@ -260,11 +270,16 @@ export const stocks: Stock[] = [
       },
       rsi: {
         value: 61
+      },
+      volume: {
+        individual: 18,
+        institutional: 62,
+        foreign: 20
       }
     },
     highlights: {
-      positive: "클라우드와 AI 소프트웨어 수요",
-      negative: "높은 기대치에 따른 실적 민감도"
+      positive: "클라우드 AI 수요 · 반복 매출 확대",
+      negative: "인프라 투자 비용 · 마진 압박"
     },
     news: [
       {
@@ -329,11 +344,16 @@ export const stocks: Stock[] = [
       },
       rsi: {
         value: 66
+      },
+      volume: {
+        individual: 35,
+        institutional: 48,
+        foreign: 17
       }
     },
     highlights: {
-      positive: "AI 가속기 수요와 데이터센터 성장",
-      negative: "높은 변동성과 밸류에이션 부담"
+      positive: "데이터센터 수요 · GPU 매출 기대",
+      negative: "공급망 집중 · 고객 쏠림 위험"
     },
     news: [
       {
@@ -398,11 +418,16 @@ export const stocks: Stock[] = [
       },
       rsi: {
         value: 41
+      },
+      volume: {
+        individual: 45,
+        institutional: 38,
+        foreign: 17
       }
     },
     highlights: {
-      positive: "자율주행과 에너지 사업 기대",
-      negative: "전기차 가격 경쟁과 높은 변동성"
+      positive: "자율주행 소프트웨어 · 에너지 사업",
+      negative: "가격 경쟁 심화 · 마진 압박"
     },
     news: [
       {
@@ -467,11 +492,16 @@ export const stocks: Stock[] = [
       },
       rsi: {
         value: 59
+      },
+      volume: {
+        individual: 38,
+        institutional: 45,
+        foreign: 17
       }
     },
     highlights: {
-      positive: "검색 광고와 클라우드 AI 수요",
-      negative: "광고 경기와 규제 리스크"
+      positive: "AI 검색 기능 · 광고 효율 개선",
+      negative: "플랫폼 규제 · 광고 경기 둔화"
     },
     news: [
       {
@@ -536,11 +566,16 @@ export const stocks: Stock[] = [
       },
       rsi: {
         value: 62
+      },
+      volume: {
+        individual: 31,
+        institutional: 52,
+        foreign: 17
       }
     },
     highlights: {
-      positive: "AWS 성장과 리테일 마진 개선",
-      negative: "물류비와 소비 둔화 부담"
+      positive: "AWS 성장 · 리테일 마진 개선",
+      negative: "물류비 증가 · 소비 둔화"
     },
     news: [
       {
@@ -605,11 +640,16 @@ export const stocks: Stock[] = [
       },
       rsi: {
         value: 55
+      },
+      volume: {
+        individual: 34,
+        institutional: 48,
+        foreign: 18
       }
     },
     highlights: {
-      positive: "AI 광고 효율과 이용자 참여",
-      negative: "규제와 대규모 투자 비용"
+      positive: "AI 광고 효율 · 이용자 참여 증가",
+      negative: "개인정보 규제 · 인프라 투자 비용"
     },
     news: [
       {
@@ -674,11 +714,16 @@ export const stocks: Stock[] = [
       },
       rsi: {
         value: 48
+      },
+      volume: {
+        individual: 29,
+        institutional: 55,
+        foreign: 16
       }
     },
     highlights: {
-      positive: "순이자이익과 신용 건전성",
-      negative: "상업용 부동산과 규제 부담"
+      positive: "순이자이익 안정 · 신용 건전성",
+      negative: "상업용 부동산 · 자본 규제 강화"
     },
     news: [
       {

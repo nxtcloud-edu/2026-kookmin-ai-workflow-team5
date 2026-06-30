@@ -45,13 +45,37 @@ export class DataUnavailableError extends Error {
   }
 }
 
+// 단순 주가 등락 표현은 메인 카드 하이라이트에서 제외 (급등·급락 등 극단적 움직임은 허용)
+const EXTREME_PRICE = /급등|급락|폭등|폭락/;
+const SIMPLE_PRICE = /^(주가|가격|시세|주식)\s*(상승|하락|오름|내림|반등|소폭|강세|약세|변동|등락)/;
+
+function isSimplePriceAction(summary: string): boolean {
+  if (EXTREME_PRICE.test(summary)) return false;
+  return SIMPLE_PRICE.test(summary);
+}
+
 function highlightsFromNews(news: NewsItem[]) {
-  const positive = news.find((item) => item.sentiment === "positive");
-  const negative = news.find((item) => item.sentiment === "negative");
+  const positives = news.filter((item) => item.sentiment === "positive");
+  const negatives = news.filter((item) => item.sentiment === "negative");
+
+  function joinSummaries(items: NewsItem[]) {
+    if (items.length === 0) return null;
+    const seen = new Set<string>();
+    const unique = items
+      .map((item) => item.summary || item.title)
+      .filter((text) => {
+        if (isSimplePriceAction(text)) return false;
+        const key = text.replace(/\s/g, "").slice(0, 10);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    return unique.length > 0 ? unique.slice(0, 3).join(" · ") : null;
+  }
 
   return {
-    positive: positive?.summary ?? positive?.title ?? "조회된 호재 뉴스가 아직 없습니다.",
-    negative: negative?.summary ?? negative?.title ?? "조회된 악재 뉴스가 아직 없습니다."
+    positive: joinSummaries(positives) ?? "조회된 호재 뉴스가 아직 없습니다.",
+    negative: joinSummaries(negatives) ?? "조회된 악재 뉴스가 아직 없습니다."
   };
 }
 

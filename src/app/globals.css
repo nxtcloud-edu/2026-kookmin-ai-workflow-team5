@@ -630,6 +630,134 @@ p {
 .trendPill.negative { color: var(--chart-down); background: var(--chart-down-soft); }
 .trendPill.neutral  { color: var(--amber); background: var(--amber-soft); }
 
+/* ── 지표 판정 뱃지 ── */
+.metricValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.metricValueRow strong {
+  font-size: 30px;
+  line-height: 1.1;
+  margin-top: 0;
+}
+.verdictBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.verdictBadge.positive { color: #fff; background: var(--green); }
+.verdictBadge.negative { color: #fff; background: var(--red); }
+.verdictBadge.neutral  { color: #fff; background: var(--amber); }
+.verdictBadge.caution  { color: #fff; background: #ea6c00; }
+
+/* ── 게이지 바 ── */
+.metricGauge {
+  margin-top: 14px;
+}
+.metricGaugeTrack {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: #e4e8ef;
+  overflow: visible;
+}
+.metricGaugeFill {
+  position: absolute;
+  inset: 0;
+  right: auto;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e5484d 0%, #ea6c00 40%, #f5c518 55%, #0f9f6e 100%);
+  transition: width 0.4s ease;
+}
+.metricGaugeDot {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #17191f;
+  border: 2.5px solid var(--surface);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  transform: translate(-50%, -50%);
+  transition: left 0.4s ease;
+  z-index: 1;
+}
+.metricGaugeZone {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 16px;
+  background: rgba(255,255,255,0.7);
+  transform: translateX(-50%);
+}
+.metricGaugeLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* ── 거래량 수급 카드 ── */
+.volumeSection {
+  margin-top: 14px;
+}
+.volumeCard .volumeTitle {
+  font-size: 18px;
+  line-height: 1.2;
+}
+.volumeBars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+.volumeRow {
+  display: grid;
+  grid-template-columns: 48px 1fr 40px;
+  align-items: center;
+  gap: 10px;
+}
+.volumeLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-strong);
+}
+.volumeBarWrap {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+.volumeBar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+.volIndividual    { background: var(--blue); }
+.volInstitutional { background: var(--green); }
+.volForeign       { background: var(--amber); }
+.volumePct {
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+  color: var(--muted-strong);
+}
+.volumeNote {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted-strong);
+  line-height: 1.5;
+}
+
 /* 차트 헤더 우측 (추세필 + 날짜 범위) */
 .chartHeaderRight {
   display: flex;
@@ -760,6 +888,106 @@ p {
   transition:
     border-color 160ms ease,
     transform 160ms ease;
+}
+
+.stockCardMain {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+}
+
+.newsToggle {
+  width: 100%;
+  margin-top: 14px;
+  padding: 9px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 760;
+  text-align: center;
+  transition: color 160ms ease;
+}
+
+.newsToggle:hover {
+  color: var(--text);
+}
+
+.newsDrawer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.newsDrawerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.newsDrawerGroupLabel {
+  margin: 0;
+}
+
+.newsDrawerStatus,
+.newsDrawerEmpty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.newsDrawerList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.newsDrawerItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-soft);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease;
+}
+
+.newsDrawerItem:hover {
+  border-color: var(--line-strong);
+}
+
+.newsDrawerMeta {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.newsDrawerItem strong {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.newsDrawerItem p {
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .marketLabel {

@@ -72,12 +72,25 @@ export async function analyzeNews(
 
   const raw = await callGroq([
     {
-      content: `You are a stock news classifier. Return ONLY a valid JSON array. No markdown, no explanation.
+      content: `You classify stock market news for a Korean investment dashboard.
+Return ONLY a valid JSON array. No markdown, no explanation.
 
-Each object must have exactly these fields:
-- "id": the exact news ID from input (e.g. "AAPL-0")
-- "sentiment": exactly one of "positive", "negative", "neutral"
-- "summary": English summary under 60 characters`,
+Sentiment rules:
+- "positive": favorable for the stock — earnings beat, revenue growth, new product/contract, strong guidance, significant price surge with clear cause, buyback
+- "negative": unfavorable — earnings miss, revenue decline, regulatory action, executive departure, product failure, significant price crash with clear cause, margin pressure
+- "neutral": vague price moves without cause, general market commentary, minor analyst notes, ambiguous articles
+
+For "summary", write a 2-4 word Korean keyword phrase capturing the core event.
+Examples: "서비스 매출 확대", "공급망 차질", "AI 수요 급증", "규제 조사 착수", "주가 급락"
+Do NOT write full sentences. Only short noun-phrase keywords in Korean.
+
+[
+  {
+    "id": "<exact id from input>",
+    "sentiment": "positive" | "negative" | "neutral",
+    "summary": "2-4 word Korean keyword"
+  }
+]`,
       role: "system"
     },
     {
@@ -90,7 +103,7 @@ Each object must have exactly these fields:
 
   try {
     const jsonMatch = raw.match(/\[[\s\S]*\]/);
-    const parsed = JSON.parse(jsonMatch?.[0] ?? "[]") as Array<{ id?: string; sentiment?: string; summary?: string }>;
+    const parsed = JSON.parse(jsonMatch?.[0] ?? "[]") as Array<Partial<GroqResult> & { id?: string }>;
 
     return new Map(
       parsed.flatMap((item) => {

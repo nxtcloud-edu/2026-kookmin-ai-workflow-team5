@@ -8,6 +8,7 @@ import { MetricCard } from "@/components/MetricCard";
 import { NewsList } from "@/components/NewsList";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { VolumeCard } from "@/components/VolumeCard";
 import { formatPercent, formatUSD } from "@/lib/format";
 import type { StockPayload } from "@/lib/marketService";
 
@@ -16,6 +17,43 @@ type StockDetailClientProps = {
 };
 
 const refreshIntervalMs = 60 * 1000;
+
+function smlVerdict(alpha: number) {
+  if (alpha >= 1.5) return { label: "크게 저평가", cls: "positive" as const };
+  if (alpha >= 0.3) return { label: "소폭 저평가", cls: "positive" as const };
+  if (alpha >= -0.3) return { label: "적정 평가", cls: "neutral" as const };
+  if (alpha >= -1.5) return { label: "소폭 고평가", cls: "caution" as const };
+  return { label: "크게 고평가", cls: "negative" as const };
+}
+
+function smlGauge(alpha: number) {
+  const clamped = Math.max(-3, Math.min(3, alpha));
+  return Math.round(((clamped + 3) / 6) * 100);
+}
+
+function perVerdict(value: number, avg: number) {
+  const pct = ((value - avg) / avg) * 100;
+  if (pct <= -20) return { label: "크게 저평가", cls: "positive" as const };
+  if (pct <= -5) return { label: "소폭 저평가", cls: "positive" as const };
+  if (pct <= 5) return { label: "업종 평균", cls: "neutral" as const };
+  if (pct <= 20) return { label: "소폭 고평가", cls: "caution" as const };
+  return { label: "크게 고평가", cls: "negative" as const };
+}
+
+function perGauge(value: number, avg: number) {
+  const pct = ((value - avg) / avg) * 100;
+  const clamped = Math.max(-50, Math.min(50, pct));
+  return Math.round(50 - clamped);
+}
+
+function rsiVerdict(rsi: number) {
+  if (rsi >= 80) return { label: "극도 과열", cls: "negative" as const };
+  if (rsi >= 70) return { label: "과열 구간", cls: "caution" as const };
+  if (rsi >= 50) return { label: "상승 모멘텀", cls: "positive" as const };
+  if (rsi >= 30) return { label: "하락 모멘텀", cls: "neutral" as const };
+  if (rsi >= 20) return { label: "침체 구간", cls: "caution" as const };
+  return { label: "극도 침체", cls: "negative" as const };
+}
 
 export function StockDetailClient({ symbol }: StockDetailClientProps) {
   const [data, setData] = useState<StockPayload | null>(null);
@@ -101,6 +139,9 @@ export function StockDetailClient({ symbol }: StockDetailClientProps) {
 
   const stock = data.stock;
   const changeClass = stock.priceChangePercent >= 0 ? "positiveText" : "negativeText";
+  const { sml, per, rsi, volume } = stock.metrics;
+  const perPct = (((per.value - per.sectorAverage) / per.sectorAverage) * 100).toFixed(1);
+  const perSign = per.value <= per.sectorAverage ? "" : "+";
 
   return (
     <>
@@ -159,23 +200,56 @@ export function StockDetailClient({ symbol }: StockDetailClientProps) {
         <div className="metricGrid">
           <MetricCard
             description="시장 위험을 감수한 만큼 기대수익이 적절한지 보는 기준선입니다."
-            detail={`베타 ${stock.metrics.sml.beta}, 기대수익 ${stock.metrics.sml.expectedReturn}%`}
+            detail={`베타 ${sml.beta} · 기대수익 ${sml.expectedReturn}% · 무위험수익 ${sml.riskFreeRate}%`}
+            gauge={{
+              value: smlGauge(sml.alpha),
+              minLabel: "크게 고평가",
+              maxLabel: "크게 저평가",
+            }}
             label="SML"
-            value={`${stock.metrics.sml.alpha >= 0 ? "+" : ""}${stock.metrics.sml.alpha.toFixed(1)}%p`}
+            value={`${sml.alpha >= 0 ? "+" : ""}${sml.alpha.toFixed(1)}%p`}
+            verdict={smlVerdict(sml.alpha)}
           />
           <MetricCard
             description="주가가 이익 대비 얼마나 비싼지 보는 주가수익비율입니다."
-            detail={`업종 평균 ${stock.metrics.per.sectorAverage}배와 비교`}
+            detail={`업종 평균 ${per.sectorAverage}배 대비 ${perSign}${perPct}%`}
+            gauge={{
+              value: perGauge(per.value, per.sectorAverage),
+              minLabel: "크게 고평가",
+              maxLabel: "크게 저평가",
+            }}
             label="PER"
-            value={`${stock.metrics.per.value}배`}
+            value={`${per.value}배`}
+            verdict={perVerdict(per.value, per.sectorAverage)}
           />
           <MetricCard
             description="최근 가격 흐름이 과열인지 침체인지 보는 단기 모멘텀 지표입니다."
-            detail="보통 70 이상은 과열, 30 이하는 침체로 해석합니다."
+            detail="30 이하 침체 · 50 중립 · 70 이상 과열"
+            gauge={{
+              value: rsi.value,
+              minLabel: "극도 침체",
+              maxLabel: "극도 과열",
+              zones: [
+                { at: 30, label: "침체 경계 30" },
+                { at: 50, label: "중립 50" },
+                { at: 70, label: "과열 경계 70" },
+              ],
+            }}
             label="RSI"
-            value={`${stock.metrics.rsi.value}`}
+            value={`${rsi.value}`}
+            verdict={rsiVerdict(rsi.value)}
           />
         </div>
+
+        {volume && (
+          <div className="volumeSection">
+            <VolumeCard
+              foreign={volume.foreign}
+              individual={volume.individual}
+              institutional={volume.institutional}
+            />
+          </div>
+        )}
       </section>
 
       <NewsList
