@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { FearGreedLevel } from "@/lib/mockData";
-import { fearGreedIndex } from "@/lib/mockData";
 
 type FearGreedData = {
   score: number;
@@ -24,35 +23,30 @@ function zoneOf(score: number): string {
   return "extreme-greed";
 }
 
-const INITIAL: FearGreedData = {
-  score: fearGreedIndex.value,
-  level: fearGreedIndex.level as FearGreedLevel,
-  label: fearGreedIndex.label,
-  description: fearGreedIndex.description,
-  previousClose: null,
-  updatedAt: fearGreedIndex.updatedAt
-};
-
 function useFearGreed() {
-  const [data, setData] = useState<FearGreedData>(INITIAL);
+  const [data, setData] = useState<FearGreedData | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [zoneChanged, setZoneChanged] = useState(false);
-  const prevZone = useRef(zoneOf(fearGreedIndex.value));
+  const prevZone = useRef<string | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
         const res = await fetch("/api/fear-greed");
-        if (!res.ok) return;
+        if (!res.ok) {
+          throw new Error("fear greed api failed");
+        }
         const next: FearGreedData = await res.json();
         const nextZone = zoneOf(next.score);
-        if (nextZone !== prevZone.current) {
+        if (prevZone.current && nextZone !== prevZone.current) {
           setZoneChanged(true);
           setTimeout(() => setZoneChanged(false), 6000);
-          prevZone.current = nextZone;
         }
+        prevZone.current = nextZone;
+        setError(null);
         setData(next);
       } catch {
-        // 실패 시 현재 상태 유지
+        setError("시장 심리 데이터를 불러오지 못했습니다.");
       }
     }
     load();
@@ -60,11 +54,23 @@ function useFearGreed() {
     return () => clearInterval(id);
   }, []);
 
-  return { data, zoneChanged };
+  return { data, error, zoneChanged };
 }
 
 export function FearGreedBanner() {
-  const { data, zoneChanged } = useFearGreed();
+  const { data, error, zoneChanged } = useFearGreed();
+
+  if (!data) {
+    return (
+      <div className="fgAlert neutral" role="status">
+        <span className="fgAlertLabel">{error ? "조회 불가" : "조회 중"}</span>
+        <span className="fgAlertDesc">
+          {error ?? "CNN Business 시장 심리 데이터를 조회 중입니다."}
+        </span>
+      </div>
+    );
+  }
+
   const diff =
     data.previousClose !== null ? data.score - data.previousClose : null;
 

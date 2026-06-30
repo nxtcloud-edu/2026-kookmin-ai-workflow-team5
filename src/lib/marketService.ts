@@ -4,19 +4,13 @@ import {
 } from "./alphaVantageClient";
 import { hydrateMarketIndexWithFred } from "./fredClient";
 import { fetchSystematicNews, fetchUnsystematicNews } from "./news";
-import {
-  getStockBySymbol,
-  marketIndex,
-  stocks,
-  systematicNews,
-  type Stock
-} from "./mockData";
+import { getStockBySymbol, marketIndex, stocks, type NewsItem, type Stock } from "./mockData";
 
-export type DataSource = "mock" | "live" | "mixed";
+export type DataSource = "live" | "partial";
 
 export type MarketPayload = {
   marketIndex: typeof marketIndex;
-  systematicNews: typeof systematicNews;
+  systematicNews: NewsItem[];
   stocks: Stock[];
   source: DataSource;
   updatedAt: string;
@@ -40,18 +34,39 @@ function wait(ms: number) {
   });
 }
 
+export class DataUnavailableError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DataUnavailableError";
+  }
+}
+
+function highlightsFromNews(news: NewsItem[]) {
+  const positive = news.find((item) => item.sentiment === "positive");
+  const negative = news.find((item) => item.sentiment === "negative");
+
+  return {
+    positive: positive?.summary ?? positive?.title ?? "조회된 호재 뉴스가 아직 없습니다.",
+    negative: negative?.summary ?? negative?.title ?? "조회된 악재 뉴스가 아직 없습니다."
+  };
+}
+
 async function hydrateStocksSequentially() {
   const hydratedStocks: Stock[] = [];
   let hasMadeAlphaVantageRequest = false;
 
-  for (const [index, stock] of stocks.entries()) {
+  for (const stock of stocks) {
     const willRequestAlphaVantage = shouldRequestAlphaVantage(stock.symbol);
 
     if (willRequestAlphaVantage && hasMadeAlphaVantageRequest) {
       await wait(1200);
     }
 
-    hydratedStocks.push(await hydrateStockWithAlphaVantage(stock));
+    const hydratedStock = await hydrateStockWithAlphaVantage(stock);
+
+    if (hydratedStock) {
+      hydratedStocks.push(hydratedStock);
+    }
 
     if (willRequestAlphaVantage) {
       hasMadeAlphaVantageRequest = true;
@@ -61,31 +76,14 @@ async function hydrateStocksSequentially() {
   return hydratedStocks;
 }
 
-function resolveSourceWithIndex(liveStocks: Stock[], liveMarketIndex: typeof marketIndex) {
-  const liveStockCount = liveStocks.filter((stock, index) => {
-    const fallback = stocks[index];
+async function attachLiveNews(stock: Stock) {
+  const news = await fetchUnsystematicNews(stock.name, stock.symbol).catch(() => []);
 
-    return (
-      stock.currentPrice !== fallback.currentPrice ||
-      stock.chart.at(-1)?.close !== fallback.chart.at(-1)?.close
-    );
-  }).length;
-  const hasLiveIndex =
-    liveMarketIndex.code !== marketIndex.code ||
-    liveMarketIndex.currentValue !== marketIndex.currentValue ||
-    liveMarketIndex.chart.at(-1)?.value !== marketIndex.chart.at(-1)?.value;
-  const changedCount = liveStockCount + (hasLiveIndex ? 1 : 0);
-  const totalCount = stocks.length + 1;
-
-  if (changedCount === totalCount) {
-    return "live";
-  }
-
-  if (changedCount > 0) {
-    return "mixed";
-  }
-
-  return "mock";
+  return {
+    ...stock,
+    highlights: highlightsFromNews(news),
+    news
+  };
 }
 
 function messageFromSource(source: DataSource) {
@@ -93,23 +91,26 @@ function messageFromSource(source: DataSource) {
     return "FRED/Alpha Vantage/Google News RSS에서 주기적으로 조회한 발표용 데이터입니다.";
   }
 
-  if (source === "mixed") {
-    return "일부 항목은 API/RSS 조회값이고, 실패한 항목은 mock data로 보완했습니다.";
-  }
-
-  return "API 키가 없거나 조회에 실패해 mock data로 표시 중입니다.";
+  return "일부 실데이터만 표시 중입니다. 조회에 실패한 항목은 숨겼습니다.";
 }
 
 export async function getMarketPayload(): Promise<MarketPayload> {
-  const [liveMarketIndex, liveStocks] = await Promise.all([
+  const [liveMarketIndex, hydratedStocks] = await Promise.all([
     hydrateMarketIndexWithFred(),
     hydrateStocksSequentially()
   ]);
-  const source = resolveSourceWithIndex(liveStocks, liveMarketIndex);
+  const liveStocks = await Promise.all(hydratedStocks.map((stock) => attachLiveNews(stock)));
   const liveSystematicNews = await fetchSystematicNews(
     "S&P 500 interest rates dollar AI semiconductor",
     "sys-live"
-  ).catch(() => systematicNews);
+  ).catch(() => []);
+
+  if (!liveMarketIndex) {
+    throw new DataUnavailableError("FRED S&P 500 지수 데이터를 조회하지 못했습니다.");
+  }
+
+  const source: DataSource =
+    liveStocks.length === stocks.length && liveSystematicNews.length > 0 ? "live" : "partial";
 
   return {
     marketIndex: liveMarketIndex,
@@ -122,25 +123,27 @@ export async function getMarketPayload(): Promise<MarketPayload> {
 }
 
 export async function getStockPayload(symbol: string): Promise<StockPayload | null> {
-  const fallbackStock = getStockBySymbol(symbol);
+  const catalogStock = getStockBySymbol(symbol);
 
-  if (!fallbackStock) {
+  if (!catalogStock) {
     return null;
   }
 
-  const liveStock = await hydrateStockWithAlphaVantage(fallbackStock);
+  const liveStock = await hydrateStockWithAlphaVantage(catalogStock);
+  if (!liveStock) {
+    throw new DataUnavailableError(`${catalogStock.symbol} 가격 데이터를 조회하지 못했습니다.`);
+  }
+
   const stockNews = await fetchUnsystematicNews(
-    fallbackStock.name,
-    fallbackStock.symbol
-  ).catch(() => fallbackStock.news);
-  const isLive =
-    liveStock.currentPrice !== fallbackStock.currentPrice ||
-    liveStock.chart.at(-1)?.close !== fallbackStock.chart.at(-1)?.close;
-  const source: DataSource = isLive ? "live" : "mock";
+    catalogStock.name,
+    catalogStock.symbol
+  ).catch(() => []);
+  const source: DataSource = stockNews.length > 0 ? "live" : "partial";
 
   return {
     stock: {
       ...liveStock,
+      highlights: highlightsFromNews(stockNews),
       news: stockNews
     },
     source,

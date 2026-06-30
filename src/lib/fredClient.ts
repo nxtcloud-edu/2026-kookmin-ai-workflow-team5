@@ -81,7 +81,7 @@ export function shouldRequestFredIndex() {
   return !cached || cached.expiresAt <= Date.now();
 }
 
-export async function hydrateMarketIndexWithFred(): Promise<MarketIndex> {
+export async function hydrateMarketIndexWithFred(): Promise<MarketIndex | null> {
   const cached = fredCache.get("SP500");
 
   if (cached && cached.expiresAt > Date.now()) {
@@ -102,7 +102,7 @@ export async function hydrateMarketIndexWithFred(): Promise<MarketIndex> {
     const data = createFredMarketIndex(points);
 
     if (!data) {
-      return cached?.data ?? marketIndex;
+      return cached?.data ?? null;
     }
 
     fredCache.set("SP500", {
@@ -112,6 +112,6 @@ export async function hydrateMarketIndexWithFred(): Promise<MarketIndex> {
 
     return data;
   } catch {
-    return cached?.data ?? marketIndex;
+    return cached?.data ?? null;
   }
 }

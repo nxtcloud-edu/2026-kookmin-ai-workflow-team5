@@ -1,10 +1,4 @@
-import OpenAI from "openai";
 import type { NewsItem } from "./mockData";
-
-const client = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: "https://api.groq.com/openai/v1",
-});
 
 type GroqResult = {
   impact: "호재" | "악재" | "중립";
@@ -12,47 +6,104 @@ type GroqResult = {
   summary: string;
 };
 
+type GroqResponse = {
+  choices?: Array<{
+    message?: {
+      content?: string;
+    };
+  }>;
+};
+
+function isImpact(value: unknown): value is GroqResult["impact"] {
+  return value === "호재" || value === "악재" || value === "중립";
+}
+
+function isSentiment(value: unknown): value is GroqResult["sentiment"] {
+  return value === "positive" || value === "negative" || value === "neutral";
+}
+
+function hasGroqConfig() {
+  return Boolean(process.env.GROQ_API_KEY);
+}
+
+function normalizeResult(value: Partial<GroqResult>): GroqResult | null {
+  if (!isImpact(value.impact) || !isSentiment(value.sentiment) || !value.summary) {
+    return null;
+  }
+
+  return {
+    impact: value.impact,
+    sentiment: value.sentiment,
+    summary: value.summary.slice(0, 80)
+  };
+}
+
 export async function analyzeNews(
   items: Pick<NewsItem, "id" | "title">[]
 ): Promise<Map<string, GroqResult>> {
+  if (!hasGroqConfig() || items.length === 0) {
+    return new Map();
+  }
+
   const numbered = items
-    .map((item, i) => `${i + 1}. [${item.id}] ${item.title}`)
+    .map((item, index) => `${index + 1}. [${item.id}] ${item.title}`)
     .join("\n");
 
-  const response = await client.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      {
-        role: "system",
-        content: `당신은 한국 주식 시장 뉴스를 분석하는 전문가입니다.
-각 뉴스 제목을 읽고 주가에 미치는 영향을 분석하세요.
-반드시 아래 JSON 배열 형식으로만 응답하세요. 다른 텍스트는 포함하지 마세요.
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    body: JSON.stringify({
+      messages: [
+        {
+          content: `You classify stock market news for an educational demo.
+Return only a JSON array. Do not include markdown or extra text.
 
 [
   {
-    "id": "뉴스ID",
+    "id": "news id",
     "impact": "호재" | "악재" | "중립",
     "sentiment": "positive" | "negative" | "neutral",
-    "summary": "주가 영향을 한 문장으로 요약 (30자 이내)"
+    "summary": "Korean summary under 40 characters"
   }
 ]`,
-      },
-      {
-        role: "user",
-        content: `다음 뉴스들을 분석해주세요:\n\n${numbered}`,
-      },
-    ],
-    temperature: 0.1,
+          role: "system"
+        },
+        {
+          content: `Classify these news titles:\n\n${numbered}`,
+          role: "user"
+        }
+      ],
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.1
+    }),
+    headers: {
+      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    method: "POST",
+    next: { revalidate: 600 }
   });
 
-  const raw = response.choices[0]?.message?.content ?? "[]";
-
-  let parsed: (GroqResult & { id: string })[];
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    parsed = [];
+  if (!response.ok) {
+    return new Map();
   }
 
-  return new Map(parsed.map((r) => [r.id, { impact: r.impact, sentiment: r.sentiment, summary: r.summary }]));
+  const payload = (await response.json()) as GroqResponse;
+  const raw = payload.choices?.[0]?.message?.content ?? "[]";
+
+  try {
+    const parsed = JSON.parse(raw) as Array<Partial<GroqResult> & { id?: string }>;
+
+    return new Map(
+      parsed.flatMap((item) => {
+        if (!item.id) {
+          return [];
+        }
+
+        const normalized = normalizeResult(item);
+
+        return normalized ? [[item.id, normalized]] : [];
+      })
+    );
+  } catch {
+    return new Map();
+  }
 }

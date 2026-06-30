@@ -27,7 +27,7 @@ export function RecommendationCard({ stock }: RecommendationCardProps) {
         ))}
       </ul>
       <p className="smallNotice">
-        실제 LLM 호출 없이 mock data와 규칙 기반 로직으로 만든 교육용 데모 분석입니다.
+        실제 LLM 호출 없이 조회 데이터와 규칙 기반 로직으로 만든 교육용 데모 분석입니다.
       </p>
     </aside>
   );

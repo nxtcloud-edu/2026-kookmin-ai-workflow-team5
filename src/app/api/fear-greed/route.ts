@@ -50,14 +50,11 @@ export async function GET() {
       source: "CNN Business"
     });
   } catch {
-    return NextResponse.json({
-      score: 27,
-      level: "fear" as FearGreedLevel,
-      label: "공포",
-      description: DESCRIPTIONS["fear"],
-      previousClose: null,
-      updatedAt: new Date().toISOString().slice(0, 10),
-      source: "fallback"
-    });
+    return NextResponse.json(
+      {
+        message: "CNN Business 시장 심리 데이터를 조회하지 못했습니다."
+      },
+      { status: 503 }
+    );
   }
 }

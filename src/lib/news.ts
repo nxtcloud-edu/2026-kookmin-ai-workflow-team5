@@ -1,6 +1,68 @@
 import type { NewsItem } from "./mockData";
 import { analyzeNews } from "./groq";
 
+const POSITIVE = [
+  "상승",
+  "호재",
+  "급등",
+  "성장",
+  "회복",
+  "개선",
+  "흑자",
+  "증가",
+  "돌파",
+  "기대",
+  "강세",
+  "반등",
+  "gain",
+  "growth",
+  "beat",
+  "beats",
+  "surge",
+  "rally",
+  "strong",
+  "upgrade",
+  "record"
+];
+const NEGATIVE = [
+  "하락",
+  "악재",
+  "급락",
+  "우려",
+  "부진",
+  "적자",
+  "감소",
+  "둔화",
+  "약세",
+  "위기",
+  "폭락",
+  "하향",
+  "fall",
+  "falls",
+  "drop",
+  "drops",
+  "slump",
+  "risk",
+  "concern",
+  "weak",
+  "downgrade",
+  "miss"
+];
+
+function detectSentiment(text: string): { sentiment: NewsItem["sentiment"]; impact: NewsItem["impact"] } {
+  const normalized = text.toLowerCase();
+
+  if (POSITIVE.some((keyword) => normalized.includes(keyword.toLowerCase()))) {
+    return { impact: "호재", sentiment: "positive" };
+  }
+
+  if (NEGATIVE.some((keyword) => normalized.includes(keyword.toLowerCase()))) {
+    return { impact: "악재", sentiment: "negative" };
+  }
+
+  return { impact: "중립", sentiment: "neutral" };
+}
+
 function decodeEntities(text: string): string {
   return text
     .replace(/&lt;/g, "<")
@@ -49,14 +111,15 @@ function parseRSS(xml: string, prefix: string): NewsItem[] {
     if (pubDateObj < cutoff) continue;
 
     const date = pubDateObj.toISOString().split("T")[0];
+    const { sentiment, impact } = detectSentiment(`${title} ${description}`);
 
     items.push({
       id: `${prefix}-${i++}`,
       title,
       source,
       date,
-      sentiment: "neutral",
-      impact: "중립",
+      sentiment,
+      impact,
       summary: description.slice(0, 120) || title,
       url
     });
@@ -72,11 +135,13 @@ async function fetchGoogleNews(query: string, prefix: string): Promise<NewsItem[
   const xml = await res.text();
   const items = parseRSS(xml, prefix).slice(0, 6);
 
-  // Groq으로 호재/악재/중립 분류 + 요약
   const analysis = await analyzeNews(items.map((item) => ({ id: item.id, title: item.title }))).catch(() => new Map());
+
   return items.map((item) => {
     const result = analysis.get(item.id);
+
     if (!result) return item;
+
     return { ...item, sentiment: result.sentiment, impact: result.impact, summary: result.summary };
   });
 }

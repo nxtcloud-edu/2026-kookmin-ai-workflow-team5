@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { StockDetailClient } from "@/components/StockDetailClient";
-import type { StockPayload } from "@/lib/marketService";
 import { getStockBySymbol, stocks } from "@/lib/mockData";
 
 type StockPageProps = {
@@ -39,17 +38,10 @@ export default async function StockDetailPage({ params }: StockPageProps) {
     notFound();
   }
 
-  const initialData: StockPayload = {
-    stock,
-    source: "mock",
-    updatedAt: new Date().toISOString(),
-    message: "API 조회 전 초기 mock data입니다."
-  };
-
   return (
     <main className="page">
       <div className="shell">
-        <StockDetailClient initialData={initialData} />
+        <StockDetailClient symbol={symbol} />
       </div>
     </main>
   );

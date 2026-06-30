@@ -1,22 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { DataPointChart } from "@/components/DataPointChart";
 import { FearGreedBanner } from "@/components/FearGreedWidget";
-import { LineChart } from "@/components/LineChart";
+import { LoadingState } from "@/components/LoadingState";
 import { NewsList } from "@/components/NewsList";
 import { StockCard } from "@/components/StockCard";
 import { formatIndex, formatPercent } from "@/lib/format";
 import type { MarketPayload } from "@/lib/marketService";
 
-type MarketDashboardProps = {
-  initialData: MarketPayload;
-};
-
 const refreshIntervalMs = 60 * 1000;
 
-export function MarketDashboard({ initialData }: MarketDashboardProps) {
-  const [data, setData] = useState(initialData);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+export function MarketDashboard() {
+  const [data, setData] = useState<MarketPayload | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(true);
   const [lastError, setLastError] = useState<string | null>(null);
 
   const refreshMarket = useCallback(async () => {
@@ -28,15 +25,23 @@ export function MarketDashboard({ initialData }: MarketDashboardProps) {
       });
 
       if (!response.ok) {
-        throw new Error(`market api failed: ${response.status}`);
+        const errorPayload = (await response.json().catch(() => null)) as
+          | { message?: string }
+          | null;
+
+        throw new Error(errorPayload?.message ?? `market api failed: ${response.status}`);
       }
 
       const payload = (await response.json()) as MarketPayload;
 
       setData(payload);
       setLastError(null);
-    } catch {
-      setLastError("API 조회 실패로 mock data를 유지 중입니다.");
+    } catch (error) {
+      setLastError(
+        error instanceof Error
+          ? error.message
+          : "실데이터를 불러오지 못했습니다. 잠시 후 다시 조회하세요."
+      );
     } finally {
       setIsRefreshing(false);
     }
@@ -56,6 +61,23 @@ export function MarketDashboard({ initialData }: MarketDashboardProps) {
     };
   }, [refreshMarket]);
 
+  if (!data && isRefreshing) {
+    return <LoadingState />;
+  }
+
+  if (!data) {
+    return (
+      <section className="emptyState" aria-live="polite">
+        <p className="eyebrow">Data unavailable</p>
+        <h2>표시할 실데이터가 없습니다</h2>
+        <p>{lastError ?? "시장 데이터를 아직 조회하지 못했습니다."}</p>
+        <button className="ghostButton" disabled={isRefreshing} onClick={refreshMarket} type="button">
+          {isRefreshing ? "조회 중" : "다시 조회"}
+        </button>
+      </section>
+    );
+  }
+
   return (
     <>
       <header className="topBar">
@@ -64,7 +86,9 @@ export function MarketDashboard({ initialData }: MarketDashboardProps) {
           <h1>미국 주식 위험 대시보드</h1>
         </div>
         <div className="statusActions">
-          <p className={`dataBadge ${data.source}`}>{data.source === "mock" ? "mock data" : "API data"}</p>
+          <p className={`dataBadge ${data.source}`}>
+            {data.source === "live" ? "API data" : "partial data"}
+          </p>
           <button className="ghostButton" disabled={isRefreshing} onClick={refreshMarket} type="button">
             {isRefreshing ? "조회 중" : "새로고침"}
           </button>
@@ -80,7 +104,7 @@ export function MarketDashboard({ initialData }: MarketDashboardProps) {
       <FearGreedBanner />
 
       <section className="heroGrid">
-        <LineChart
+        <DataPointChart
           points={data.marketIndex.chart}
           subtitle={`${data.marketIndex.code} - ${data.marketIndex.updatedAt}`}
           title={data.marketIndex.name}
@@ -117,9 +141,11 @@ export function MarketDashboard({ initialData }: MarketDashboardProps) {
         </div>
 
         <div className="stockGrid">
-          {data.stocks.map((stock) => (
-            <StockCard key={stock.symbol} stock={stock} />
-          ))}
+          {data.stocks.length > 0 ? (
+            data.stocks.map((stock) => <StockCard key={stock.symbol} stock={stock} />)
+          ) : (
+            <div className="emptyInline">조회된 종목 실데이터가 없습니다.</div>
+          )}
         </div>
       </section>
     </>

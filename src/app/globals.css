@@ -103,15 +103,14 @@ p {
   background: var(--blue-soft);
 }
 
-.dataBadge.mock {
-  color: var(--amber);
-  background: var(--amber-soft);
-}
-
-.dataBadge.live,
-.dataBadge.mixed {
+.dataBadge.live {
   color: var(--green);
   background: var(--green-soft);
+}
+
+.dataBadge.partial {
+  color: var(--amber);
+  background: var(--amber-soft);
 }
 
 .statusActions {
@@ -174,6 +173,67 @@ p {
   font-size: 13px;
   font-weight: 680;
   line-height: 1.5;
+}
+
+.loadingState,
+.emptyState {
+  display: flex;
+  min-height: 420px;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 48px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+
+.loadingState h2,
+.emptyState h2 {
+  margin-top: 6px;
+  font-size: 24px;
+  line-height: 1.32;
+  letter-spacing: 0;
+}
+
+.loadingState p,
+.emptyState p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.emptyState {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.loadingSpinner {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border: 3px solid var(--line);
+  border-top-color: var(--blue);
+  border-radius: 999px;
+  animation: spin 900ms linear infinite;
+}
+
+.emptyInline {
+  grid-column: 1 / -1;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .chartBlock,
@@ -249,6 +309,18 @@ p {
   background: var(--red);
 }
 
+.legendDot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.legendDot.index {
+  border: 2px solid var(--green);
+  background: var(--surface);
+}
+
 .legendLine {
   display: inline-block;
   width: 18px;
@@ -258,7 +330,7 @@ p {
 }
 
 .candleChart,
-.lineChart {
+.dataPointChart {
   display: block;
   width: 100%;
   margin-top: 18px;
@@ -266,13 +338,13 @@ p {
 }
 
 .candleChart .axis,
-.lineChart .axis {
+.dataPointChart .axis {
   stroke: var(--line-strong);
   stroke-width: 1;
 }
 
 .candleChart .movingAverage,
-.lineChart .movingAverage {
+.dataPointChart .movingAverage {
   fill: none;
   stroke: var(--blue);
   stroke-linecap: round;
@@ -280,18 +352,27 @@ p {
   stroke-width: 3;
 }
 
-.lineChart .indexLine {
-  fill: none;
-  stroke: var(--green);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 3;
+.dataPointChart .pointGuide {
+  stroke: var(--line);
+  stroke-width: 1;
+  opacity: 0.72;
 }
 
-.lineChart .lastPoint {
+.dataPointChart .dataPoint circle {
   fill: var(--surface);
   stroke: var(--green);
-  stroke-width: 3;
+  stroke-width: 2;
+}
+
+.dataPointChart .dataPoint.latest circle {
+  fill: var(--green);
+}
+
+.dataPointChart .axisLabel {
+  fill: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: middle;
 }
 
 .candleChart .wick {
@@ -319,10 +400,6 @@ p {
 
 .candleChart.stock .movingAverage {
   stroke: var(--blue);
-}
-
-.legendLine.index {
-  background: var(--green);
 }
 
 .indexSummary,

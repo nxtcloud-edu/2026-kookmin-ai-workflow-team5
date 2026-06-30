@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { CandlestickChart } from "@/components/CandlestickChart";
+import { LoadingState } from "@/components/LoadingState";
 import { MetricCard } from "@/components/MetricCard";
 import { NewsList } from "@/components/NewsList";
 import { RecommendationCard } from "@/components/RecommendationCard";
@@ -10,18 +11,15 @@ import { formatPercent, formatUSD } from "@/lib/format";
 import type { StockPayload } from "@/lib/marketService";
 
 type StockDetailClientProps = {
-  initialData: StockPayload;
+  symbol: string;
 };
 
 const refreshIntervalMs = 60 * 1000;
 
-export function StockDetailClient({ initialData }: StockDetailClientProps) {
-  const [data, setData] = useState(initialData);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+export function StockDetailClient({ symbol }: StockDetailClientProps) {
+  const [data, setData] = useState<StockPayload | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(true);
   const [lastError, setLastError] = useState<string | null>(null);
-  const stock = data.stock;
-  const symbol = initialData.stock.symbol;
-  const changeClass = stock.priceChangePercent >= 0 ? "positiveText" : "negativeText";
 
   const refreshStock = useCallback(async () => {
     setIsRefreshing(true);
@@ -32,15 +30,23 @@ export function StockDetailClient({ initialData }: StockDetailClientProps) {
       });
 
       if (!response.ok) {
-        throw new Error(`stock api failed: ${response.status}`);
+        const errorPayload = (await response.json().catch(() => null)) as
+          | { message?: string }
+          | null;
+
+        throw new Error(errorPayload?.message ?? `stock api failed: ${response.status}`);
       }
 
       const payload = (await response.json()) as StockPayload;
 
       setData(payload);
       setLastError(null);
-    } catch {
-      setLastError("API 조회 실패로 mock data를 유지 중입니다.");
+    } catch (error) {
+      setLastError(
+        error instanceof Error
+          ? error.message
+          : "종목 실데이터를 불러오지 못했습니다. 잠시 후 다시 조회하세요."
+      );
     } finally {
       setIsRefreshing(false);
     }
@@ -59,6 +65,41 @@ export function StockDetailClient({ initialData }: StockDetailClientProps) {
       window.clearInterval(timer);
     };
   }, [refreshStock]);
+
+  if (!data && isRefreshing) {
+    return (
+      <>
+        <Link className="backLink" href="/">
+          전체 시장으로 돌아가기
+        </Link>
+        <LoadingState
+          description="Alpha Vantage 가격 데이터와 Google News RSS 응답을 기다리는 중입니다."
+          title="종목 실데이터를 조회 중입니다"
+        />
+      </>
+    );
+  }
+
+  if (!data) {
+    return (
+      <>
+        <Link className="backLink" href="/">
+          전체 시장으로 돌아가기
+        </Link>
+        <section className="emptyState" aria-live="polite">
+          <p className="eyebrow">Data unavailable</p>
+          <h2>{symbol} 실데이터를 표시할 수 없습니다</h2>
+          <p>{lastError ?? "종목 데이터를 아직 조회하지 못했습니다."}</p>
+          <button className="ghostButton" disabled={isRefreshing} onClick={refreshStock} type="button">
+            {isRefreshing ? "조회 중" : "다시 조회"}
+          </button>
+        </section>
+      </>
+    );
+  }
+
+  const stock = data.stock;
+  const changeClass = stock.priceChangePercent >= 0 ? "positiveText" : "negativeText";
 
   return (
     <>
