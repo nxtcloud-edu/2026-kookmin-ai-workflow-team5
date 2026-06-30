@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AWS Charting",
-  description: "미국 주식 위험 정보를 설명하는 발표용 로컬 데모 대시보드"
+  description: "미국 주식 위험 정보를 조회하고 해석하는 로컬 대시보드"
 };
 
 export default function RootLayout({

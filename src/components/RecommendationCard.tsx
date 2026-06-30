@@ -12,13 +12,13 @@ export function RecommendationCard({ stock }: RecommendationCardProps) {
   return (
     <aside className="recommendationCard">
       <div className="recommendationTop">
-        <p className="eyebrow">LLM-like 데모 분석</p>
+        <p className="eyebrow">규칙 기반 위험 분석</p>
         <span className={`pill ${statusClass(recommendation.status)}`}>
           {recommendation.status}
         </span>
       </div>
       <h2>{recommendation.summary}</h2>
-      <div className="scoreBar" aria-label={`데모 점수 ${recommendation.score}점`}>
+      <div className="scoreBar" aria-label={`위험 분석 점수 ${recommendation.score}점`}>
         <span style={{ width: `${recommendation.score}%` }} />
       </div>
       <ul>
@@ -27,7 +27,7 @@ export function RecommendationCard({ stock }: RecommendationCardProps) {
         ))}
       </ul>
       <p className="smallNotice">
-        실제 LLM 호출 없이 조회 데이터와 규칙 기반 로직으로 만든 교육용 데모 분석입니다.
+        조회 데이터와 규칙 기반 로직으로 산출한 위험 분석 결과입니다.
       </p>
     </aside>
   );
