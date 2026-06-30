@@ -1,4 +1,4 @@
-import type { Stock } from "./mockData";
+import { isTradableStock, type Stock } from "./mockData";
 
 export type RecommendationStatus = "관심" | "관망" | "주의";
 
@@ -17,6 +17,33 @@ export function createRecommendation(stock: Stock): Recommendation {
   const positiveNews = stock.news.filter((news) => news.sentiment === "positive").length;
   const negativeNews = stock.news.filter((news) => news.sentiment === "negative").length;
   const sentimentScore = (positiveNews - negativeNews) * 8;
+
+  if (!isTradableStock(stock)) {
+    const score = clampScore(52 + sentimentScore - (stock.riskScore >= 60 ? 8 : 0));
+    const status: RecommendationStatus =
+      score >= 68 ? "관심" : score >= 45 ? "관망" : "주의";
+    const summaryByStatus: Record<RecommendationStatus, string> = {
+      관심: `${stock.name}은 기업 뉴스 흐름이 우호적이지만 비상장 유동성 리스크를 함께 확인해야 합니다.`,
+      관망: `${stock.name}은 공개시장 가격 지표보다 기업 뉴스와 비상장 유동성 리스크를 함께 확인해야 합니다.`,
+      주의: `${stock.name}은 비상장 유동성 리스크와 부담 요인을 신중히 확인해야 합니다.`
+    };
+
+    return {
+      status,
+      score,
+      summary: summaryByStatus[status],
+      reasons: [
+        "거래소 상장 주식이 아니어서 주가, PER, RSI, SML 지표를 제공하지 않습니다.",
+        positiveNews > negativeNews
+          ? "최근 뉴스 흐름에서 성장 기대 요인이 더 많이 확인됩니다."
+          : negativeNews > positiveNews
+            ? "최근 뉴스 흐름에서 일정, 규제, 비용 부담을 더 신중히 확인해야 합니다."
+            : "최근 뉴스 흐름은 긍정과 부담 요인이 함께 섞여 있습니다.",
+        "비상장 기업은 일반 투자자가 직접 매매하기 어렵고 가격 투명성이 낮습니다."
+      ]
+    };
+  }
+
   const perScore =
     stock.metrics.per.value <= stock.metrics.per.sectorAverage ? 8 : -6;
   const rsiScore =

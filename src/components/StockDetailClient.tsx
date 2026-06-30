@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { VolumeCard } from "@/components/VolumeCard";
 import { formatPercent, formatUSD } from "@/lib/format";
 import type { StockPayload } from "@/lib/marketService";
+import { isTradableStock } from "@/lib/mockData";
 
 type StockDetailClientProps = {
   symbol: string;
@@ -138,6 +139,103 @@ export function StockDetailClient({ symbol }: StockDetailClientProps) {
   }
 
   const stock = data.stock;
+  const isTradable = isTradableStock(stock);
+
+  if (!isTradable) {
+    return (
+      <>
+        <Link className="backLink" href="/">
+          전체 시장으로 돌아가기
+        </Link>
+
+        <header className="detailHeader">
+          <div>
+            <p className="eyebrow">
+              {stock.market} - {stock.sector}
+            </p>
+            <h1>{stock.name}</h1>
+            <p>{stock.symbol}</p>
+          </div>
+          <div className="detailActions">
+            <ThemeToggle />
+            <div className="detailPrice">
+              <strong>비상장</strong>
+              <span>가격 API 미제공</span>
+            </div>
+          </div>
+        </header>
+
+        <section className="dataStatus" aria-live="polite">
+          <span>{data.message}</span>
+          <span>{new Date(data.updatedAt).toLocaleString("ko-KR")}</span>
+          {lastError ? <span className="negativeText">{lastError}</span> : null}
+          <button className="ghostButton" disabled={isRefreshing} onClick={refreshStock} type="button">
+            {isRefreshing ? "조회 중" : "새로고침"}
+          </button>
+        </section>
+
+        <section className="detailGrid">
+          <aside className="privateInfoCard">
+            <p className="eyebrow">비상장 기업</p>
+            <h2>거래소 주가 데이터가 없는 관심 기업입니다</h2>
+            <p>
+              {stock.dataNote ??
+                "상장 주식이 아니어서 일반 주가 API로 가격과 기술 지표를 조회할 수 없습니다."}
+            </p>
+            <div className="beginnerNote">
+              비상장 기업은 공개시장에서 바로 매매되는 종목이 아니므로 가격 차트보다 뉴스,
+              사업 진행 상황, 규제 이슈를 중심으로 확인합니다.
+            </div>
+          </aside>
+          <RecommendationCard stock={stock} recommendation={data.recommendation} />
+        </section>
+
+        <section className="contentSection">
+          <div className="sectionHeader">
+            <div>
+              <p className="eyebrow">확인 항목</p>
+              <h2>SpaceX를 볼 때 먼저 확인할 정보</h2>
+            </div>
+            <p>
+              가격 지표 대신 발사 일정, Starlink 가입자 흐름, 규제와 자금 조달 이슈를
+              함께 확인합니다.
+            </p>
+          </div>
+
+          <div className="metricGrid">
+            <MetricCard
+              description="거래소에 상장되지 않아 일반 주식처럼 매수·매도 가격이 공개되지 않습니다."
+              detail="Twelve Data와 Alpha Vantage 가격 조회 대상에서 제외"
+              label="거래 상태"
+              value="비상장"
+              verdict={{ label: "가격 미제공", cls: "neutral" }}
+            />
+            <MetricCard
+              description="발사 성공률과 위성 인터넷 확장은 성장 기대를 만드는 핵심 요인입니다."
+              detail="뉴스에서 발사, 계약, Starlink 확장 내용을 확인"
+              label="성장 요인"
+              value="뉴스"
+              verdict={{ label: "정성 확인", cls: "positive" }}
+            />
+            <MetricCard
+              description="규제, 사고, 일정 지연, 자금 조달 조건은 기업 가치 평가에 부담이 될 수 있습니다."
+              detail="부정 뉴스와 일정 변경을 함께 확인"
+              label="위험 요인"
+              value="이벤트"
+              verdict={{ label: "주의 확인", cls: "caution" }}
+            />
+          </div>
+        </section>
+
+        <NewsList
+          description="비체계적 위험"
+          items={stock.news}
+          title={`${stock.name} 개별 호재와 악재`}
+        />
+      </>
+    );
+  }
+
   const changeClass = stock.priceChangePercent >= 0 ? "positiveText" : "negativeText";
   const { sml, per, rsi, volume } = stock.metrics;
   const perPct = (((per.value - per.sectorAverage) / per.sectorAverage) * 100).toFixed(1);

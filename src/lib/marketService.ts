@@ -5,7 +5,14 @@ import {
 import { hydrateMarketIndexWithFred } from "./fredClient";
 import { analyzeStockWithGroq } from "./groq";
 import { fetchSystematicNews, fetchUnsystematicNews } from "./news";
-import { getStockBySymbol, marketIndex, stocks, type NewsItem, type Stock } from "./mockData";
+import {
+  getStockBySymbol,
+  isTradableStock,
+  marketIndex,
+  stocks,
+  type NewsItem,
+  type Stock
+} from "./mockData";
 import type { Recommendation } from "./recommendation";
 import { hydrateStockWithTwelveData, shouldRequestTwelveData } from "./twelveDataClient";
 
@@ -84,6 +91,11 @@ async function hydrateStocksSequentially() {
   let hasMadeExternalStockRequest = false;
 
   for (const stock of stocks) {
+    if (!isTradableStock(stock)) {
+      hydratedStocks.push(stock);
+      continue;
+    }
+
     const willRequestTwelveData = shouldRequestTwelveData(stock.symbol);
 
     if (willRequestTwelveData && hasMadeExternalStockRequest) {
@@ -172,6 +184,29 @@ export async function getStockPayload(symbol: string): Promise<StockPayload | nu
 
   if (!catalogStock) {
     return null;
+  }
+
+  if (!isTradableStock(catalogStock)) {
+    const stockNews = await fetchUnsystematicNews(
+      catalogStock.name,
+      catalogStock.symbol
+    ).catch(() => []);
+    const source: DataSource = stockNews.length > 0 ? "live" : "partial";
+
+    return {
+      stock: {
+        ...catalogStock,
+        highlights: highlightsFromNews(stockNews),
+        news: stockNews
+      },
+      recommendation: null,
+      source,
+      updatedAt: getTimestamp(),
+      message:
+        stockNews.length > 0
+          ? "Google News RSS에서 조회한 비상장 기업 뉴스입니다."
+          : "비상장 기업이며 현재 조회된 뉴스가 없습니다."
+    };
   }
 
   const liveStock =
