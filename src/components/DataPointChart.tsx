@@ -78,6 +78,7 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
     x: scaleX(index),
     y: scaleY(point.value)
   }));
+  const indexLine = plottedPoints.map((point) => `${point.x},${point.y}`).join(" ");
   const markerStep = Math.max(1, Math.ceil(points.length / 6));
   const axisMarkers = plottedPoints.filter(
     (_, i) => i % markerStep === 0 || i === plottedPoints.length - 1
@@ -102,7 +103,7 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
       </div>
 
       <div className="chartLegend" aria-label="차트 범례">
-        <span><i className="legendDot index" />FRED 일별 종가</span>
+        <span><i className="legendSquare index" />FRED 종가선</span>
         {MA_CONFIGS.map((cfg) => (
           <span key={cfg.days}>
             <i className={`legendLine ${cfg.cls}`} />
@@ -112,7 +113,7 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
       </div>
 
       <svg
-        aria-label={`${title} 일별 데이터 포인트와 이동평균선`}
+        aria-label={`${title} 일별 종가선, 사각형 마커와 이동평균선`}
         className="dataPointChart"
         role="img"
         viewBox={`0 0 ${width} ${height}`}
@@ -120,21 +121,28 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
         <line className="axis" x1={padding} x2={width - padding} y1={height - padding} y2={height - padding} />
         <line className="axis" x1={padding} x2={padding} y1={padding} y2={height - padding} />
 
+        <polyline className="indexLine" points={indexLine} />
+
         {/* 이동평균선 — 긴 것 먼저 */}
         {[...maLines].reverse().map((pts, ri) => {
           const i = MA_CONFIGS.length - 1 - ri;
           return <polyline key={MA_CONFIGS[i].cls} className={`movingAverage ${MA_CONFIGS[i].cls}`} points={pts} />;
         })}
 
-        {/* 데이터 포인트 */}
+        {/* 종가선 사각형 마커 */}
         {plottedPoints.map((point, index) => {
           const isLatest = index === plottedPoints.length - 1;
+          const markerSize = isLatest ? 9 : 7;
           return (
             <g className={`dataPoint${isLatest ? " latest" : ""}`} key={`${point.date ?? point.label}-${point.value}`}>
-              <line className="pointGuide" x1={point.x} x2={point.x} y1={point.y} y2={height - padding} />
-              <circle cx={point.x} cy={point.y} r={isLatest ? 5 : 3.5}>
-                <title>{point.date ?? point.label}: {formatChartValue(point.value)}</title>
-              </circle>
+              <title>{point.date ?? point.label}: {formatChartValue(point.value)}</title>
+              <rect
+                height={markerSize}
+                rx="1.5"
+                width={markerSize}
+                x={point.x - markerSize / 2}
+                y={point.y - markerSize / 2}
+              />
             </g>
           );
         })}

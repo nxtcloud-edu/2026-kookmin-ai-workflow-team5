@@ -57,7 +57,7 @@
 
 ## 화면 구조
 
-- `/`: FRED S&P 500 지수 데이터 포인트 그래프와 5일 이동평균선, 시장 공통 뉴스, 종목 카드 목록, `/api/market` 주기 조회
+- `/`: FRED S&P 500 지수 선 그래프, 사각형 마커, 5일 이동평균선, 시장 공통 뉴스, 종목 카드 목록, `/api/market` 주기 조회
 - `/stocks/[symbol]`: 선택 종목 봉차트와 3일 이동평균선, 추천 카드, SML/PER/RSI, 개별 뉴스, `/api/stocks/[symbol]` 주기 조회
 - `/loading.tsx`, `/stocks/[symbol]/loading.tsx`: 실데이터 조회 중 loading page 표시
 - `origin/feat/team5-member`의 Groq 뉴스 분석과 10일 뉴스 필터링 커밋을 반영하되, 추가 npm 패키지 없이 native `fetch` 기반 선택 호출로 통합
@@ -66,7 +66,7 @@
 
 - App Router 기반 Next.js 프로젝트 구조
 - 반응형 미니멀 대시보드 UI
-- SVG 기반 지수 데이터 포인트 그래프 컴포넌트와 5일 이동평균선
+- SVG 기반 지수 선 그래프, 사각형 마커, 5일 이동평균선
 - SVG 기반 종목 봉차트 컴포넌트와 3일 이동평균선
 - 종목별 상세 라우팅
 - 클릭 가능한 뉴스 링크와 `noopener noreferrer` 적용

@@ -309,14 +309,14 @@ p {
   background: var(--red);
 }
 
-.legendDot {
+.legendSquare {
   display: inline-block;
   width: 10px;
   height: 10px;
-  border-radius: 999px;
+  border-radius: 2px;
 }
 
-.legendDot.index {
+.legendSquare.index {
   border: 2px solid var(--green);
   background: var(--surface);
 }
@@ -352,19 +352,21 @@ p {
   stroke-width: 3;
 }
 
-.dataPointChart .pointGuide {
-  stroke: var(--line);
-  stroke-width: 1;
-  opacity: 0.72;
+.dataPointChart .indexLine {
+  fill: none;
+  stroke: var(--green);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
 }
 
-.dataPointChart .dataPoint circle {
+.dataPointChart .dataPoint rect {
   fill: var(--surface);
   stroke: var(--green);
   stroke-width: 2;
 }
 
-.dataPointChart .dataPoint.latest circle {
+.dataPointChart .dataPoint.latest rect {
   fill: var(--green);
 }
 
