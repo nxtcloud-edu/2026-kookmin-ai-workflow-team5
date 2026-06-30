@@ -18,7 +18,9 @@ export function NewsList({ title, description, items }: NewsListProps) {
       </div>
 
       <div className="newsList">
-        {items.length > 0 ? (
+        {items.length === 0 ? (
+          <p className="newsLoading">뉴스를 불러오는 중입니다...</p>
+        ) : (
           items.map((item) => (
             <a
               className="newsItem"
@@ -36,8 +38,6 @@ export function NewsList({ title, description, items }: NewsListProps) {
               <p>{item.summary}</p>
             </a>
           ))
-        ) : (
-          <div className="emptyInline">조회된 실시간 뉴스가 없습니다.</div>
         )}
       </div>
     </section>
