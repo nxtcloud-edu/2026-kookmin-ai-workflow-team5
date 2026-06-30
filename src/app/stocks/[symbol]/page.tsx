@@ -6,6 +6,7 @@ import { NewsList } from "@/components/NewsList";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { formatKRW, formatPercent } from "@/lib/format";
 import { getStockBySymbol, stocks } from "@/lib/mockData";
+import { fetchUnsystematicNews } from "@/lib/news";
 
 type StockPageProps = {
   params: Promise<{
@@ -42,6 +43,8 @@ export default async function StockDetailPage({ params }: StockPageProps) {
   if (!stock) {
     notFound();
   }
+
+  const newsItems = await fetchUnsystematicNews(stock.name).catch(() => stock.news);
 
   const changeClass = stock.priceChangePercent >= 0 ? "positiveText" : "negativeText";
 
@@ -112,7 +115,7 @@ export default async function StockDetailPage({ params }: StockPageProps) {
 
         <NewsList
           description="비체계적 위험"
-          items={stock.news}
+          items={newsItems}
           title={`${stock.name} 개별 호재와 악재`}
         />
       </div>

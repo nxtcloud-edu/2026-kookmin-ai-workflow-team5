@@ -3,8 +3,10 @@ import { NewsList } from "@/components/NewsList";
 import { StockCard } from "@/components/StockCard";
 import { formatIndex, formatPercent } from "@/lib/format";
 import { marketIndex, stocks, systematicNews } from "@/lib/mockData";
+import { fetchSystematicNews } from "@/lib/news";
 
-export default function Home() {
+export default async function Home() {
+  const systematicNewsItems = await fetchSystematicNews().catch(() => systematicNews);
   return (
     <main className="page">
       <div className="shell">
@@ -37,7 +39,7 @@ export default function Home() {
 
         <NewsList
           description="체계적 위험"
-          items={systematicNews}
+          items={systematicNewsItems}
           title="시장 공통 호재와 악재"
         />
 
