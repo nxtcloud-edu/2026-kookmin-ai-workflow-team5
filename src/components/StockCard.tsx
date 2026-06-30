@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Stock } from "@/lib/mockData";
+import { isTradableStock, type Stock } from "@/lib/mockData";
 import { formatPercent, formatUSD, statusClass } from "@/lib/format";
 import { createRecommendation } from "@/lib/recommendation";
 
@@ -9,6 +9,7 @@ type StockCardProps = {
 
 export function StockCard({ stock }: StockCardProps) {
   const recommendation = createRecommendation(stock);
+  const isTradable = isTradableStock(stock);
   const changeClass = stock.priceChangePercent >= 0 ? "positiveText" : "negativeText";
 
   return (
@@ -24,10 +25,17 @@ export function StockCard({ stock }: StockCardProps) {
         </span>
       </div>
 
-      <div className="stockPriceLine">
-        <strong>{formatUSD(stock.currentPrice)}</strong>
-        <span className={changeClass}>{formatPercent(stock.priceChangePercent)}</span>
-      </div>
+      {isTradable ? (
+        <div className="stockPriceLine">
+          <strong>{formatUSD(stock.currentPrice)}</strong>
+          <span className={changeClass}>{formatPercent(stock.priceChangePercent)}</span>
+        </div>
+      ) : (
+        <div className="stockPriceLine private">
+          <strong>비상장 기업</strong>
+          <span>뉴스 기반 확인</span>
+        </div>
+      )}
 
       <dl className="stockFacts">
         <div>

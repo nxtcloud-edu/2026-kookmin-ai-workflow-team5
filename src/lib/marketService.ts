@@ -5,7 +5,14 @@ import {
 import { hydrateMarketIndexWithFred } from "./fredClient";
 import { analyzeStockWithGroq } from "./groq";
 import { fetchSystematicNews, fetchUnsystematicNews } from "./news";
-import { getStockBySymbol, marketIndex, stocks, type NewsItem, type Stock } from "./mockData";
+import {
+  getStockBySymbol,
+  isTradableStock,
+  marketIndex,
+  stocks,
+  type NewsItem,
+  type Stock
+} from "./mockData";
 import type { Recommendation } from "./recommendation";
 import { hydrateStockWithTwelveData, shouldRequestTwelveData } from "./twelveDataClient";
 
@@ -84,6 +91,11 @@ async function hydrateStocksSequentially() {
   let hasMadeExternalStockRequest = false;
 
   for (const stock of stocks) {
+    if (!isTradableStock(stock)) {
+      hydratedStocks.push(stock);
+      continue;
+    }
+
     const willRequestTwelveData = shouldRequestTwelveData(stock.symbol);
 
     if (willRequestTwelveData && hasMadeExternalStockRequest) {
@@ -122,6 +134,10 @@ async function hydrateStocksSequentially() {
 }
 
 async function attachLiveNews(stock: Stock) {
+  if (!isTradableStock(stock)) {
+    return stock;
+  }
+
   const news = await fetchUnsystematicNews(stock.name, stock.symbol).catch(() => []);
 
   return {
@@ -172,6 +188,16 @@ export async function getStockPayload(symbol: string): Promise<StockPayload | nu
 
   if (!catalogStock) {
     return null;
+  }
+
+  if (!isTradableStock(catalogStock)) {
+    return {
+      stock: catalogStock,
+      recommendation: null,
+      source: "partial",
+      updatedAt: getTimestamp(),
+      message: "비상장 기업이므로 외부 API 조회 없이 기본 기업 정보를 표시합니다."
+    };
   }
 
   const liveStock =

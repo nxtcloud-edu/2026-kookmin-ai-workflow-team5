@@ -51,8 +51,10 @@ export type StockMetricSet = {
 export type Stock = {
   symbol: string;
   name: string;
-  market: "NASDAQ" | "NYSE";
+  market: "NASDAQ" | "NYSE" | "PRIVATE";
   sector: string;
+  isTradable?: boolean;
+  dataNote?: string;
   currentPrice: number;
   priceChangePercent: number;
   riskScore: number;
@@ -705,8 +707,52 @@ export const stocks: Stock[] = [
         url: "https://example.com/mock-news/jpm-credit-risk"
       }
     ]
+  },
+  {
+    symbol: "SPACEX",
+    name: "SpaceX",
+    market: "PRIVATE",
+    sector: "Aerospace",
+    isTradable: false,
+    dataNote:
+      "SpaceX는 거래소에 상장되지 않은 비상장 기업이므로 주가, PER, RSI, SML 가격 지표를 제공하지 않습니다.",
+    currentPrice: 0,
+    priceChangePercent: 0,
+    riskScore: 61,
+    volatility: 0,
+    chart: [],
+    metrics: {
+      sml: {
+        beta: 0,
+        expectedReturn: 0,
+        marketReturn: 0,
+        riskFreeRate: 0,
+        alpha: 0
+      },
+      per: {
+        value: 0,
+        sectorAverage: 1
+      },
+      rsi: {
+        value: 50
+      },
+      volume: {
+        individual: 0,
+        institutional: 0,
+        foreign: 0
+      }
+    },
+    highlights: {
+      positive: "발사 수요 · 위성 인터넷 확장",
+      negative: "비상장 유동성 제한 · 규제와 발사 일정"
+    },
+    news: []
   }
 ];
+
+export function isTradableStock(stock: Stock) {
+  return stock.isTradable !== false && stock.market !== "PRIVATE";
+}
 
 export function getStockBySymbol(symbol: string) {
   return stocks.find((stock) => stock.symbol === symbol.toUpperCase());

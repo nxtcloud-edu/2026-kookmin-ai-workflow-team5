@@ -11,7 +11,7 @@ https://sigebert111-boot-charting.vercel.app
 ## 주요 기능
 
 - FRED 기반 S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, 줌/가로 스크롤 탐색
-- 미국 8개 종목 카드와 비체계적 위험 요약
+- 미국 8개 상장 종목과 SpaceX 비상장 관심 기업 카드, 비체계적 위험 요약
 - `/stocks/[symbol]` 종목 상세 라우트
 - 종목별 2016-01-01 이후 장기 봉차트, 기간 선택, 줌/가로 스크롤 탐색
 - 차트 상승 구간은 빨간색, 하락 구간은 파란색 계열로 표시
@@ -39,7 +39,7 @@ TWELVE_DATA_API_KEY=
 ALPHA_VANTAGE_API_KEY=
 ```
 
-FRED는 S&P 500 지수 조회에 `FRED_API_KEY`가 필요합니다. Google News RSS는 별도 API 키가 필요 없습니다. 종목 가격은 Twelve Data를 먼저 조회하고, 실패하면 Alpha Vantage를 백업으로 조회합니다. 두 API 모두 캐시가 없고 조회에 실패하면 해당 종목은 표시하지 않습니다. 브라우저는 `/api/market`, `/api/stocks/[symbol]`을 1분 간격으로 다시 조회합니다.
+FRED는 S&P 500 지수 조회에 `FRED_API_KEY`가 필요합니다. Google News RSS는 별도 API 키가 필요 없습니다. 종목 가격은 Twelve Data를 먼저 조회하고, 실패하면 Alpha Vantage를 백업으로 조회합니다. 두 API 모두 캐시가 없고 조회에 실패하면 해당 종목은 표시하지 않습니다. SpaceX는 상장 티커가 없는 비상장 기업이므로 가격 API와 뉴스 API 조회 대상에서 제외하고 기본 기업 정보만 표시합니다. 브라우저는 `/api/market`, `/api/stocks/[symbol]`을 1분 간격으로 다시 조회합니다.
 
 `TWELVE_DATA_API_KEY`는 Twelve Data 회원 가입 후 대시보드의 API Key 메뉴에서 발급받아 `.env.local`에 넣습니다. Twelve Data는 무료 Basic 플랜을 제공하므로 1차 종목 가격 API로 사용합니다.
 
