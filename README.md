@@ -7,10 +7,10 @@
 - FRED 기반 S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, 줌/가로 스크롤 탐색
 - 미국 8개 종목 카드와 비체계적 위험 요약
 - `/stocks/[symbol]` 종목 상세 라우트
-- 종목별 봉차트와 3일 이동평균선
+- 종목별 2016-01-01 이후 장기 봉차트, 기간 선택, 줌/가로 스크롤 탐색
 - 차트 상승 구간은 빨간색, 하락 구간은 파란색 계열로 표시
 - FRED CSV 기반 S&P 500 일별 종가 조회, 2016-01-01 이후 장기 데이터 표시
-- Twelve Data 우선, Alpha Vantage 백업 기반 미국 주식 일봉 OHLC 조회
+- Twelve Data 우선, Alpha Vantage 백업 기반 미국 주식 일봉 OHLC 장기 조회
 - Google News RSS 기반 뉴스 조회
 - 선택적 Groq 뉴스 분류/요약과 로컬 규칙 기반 fallback
 - SML, PER, RSI 지표 설명

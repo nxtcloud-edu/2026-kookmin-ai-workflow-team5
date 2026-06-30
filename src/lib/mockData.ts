@@ -2,6 +2,7 @@ export type Sentiment = "positive" | "negative" | "neutral";
 
 export type CandlePoint = {
   label: string;
+  date?: string;
   open: number;
   high: number;
   low: number;

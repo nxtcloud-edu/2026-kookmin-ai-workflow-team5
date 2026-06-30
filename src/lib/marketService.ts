@@ -106,7 +106,7 @@ async function attachLiveNews(stock: Stock) {
 
 function messageFromSource(source: DataSource) {
   if (source === "live") {
-    return "FRED/Twelve Data/Alpha Vantage/Google News RSS에서 주기적으로 조회한 발표용 데이터입니다.";
+    return "FRED/Twelve Data/Alpha Vantage/Google News RSS에서 조회한 발표용 데이터입니다.";
   }
 
   return "일부 실데이터만 표시 중입니다. 조회에 실패한 항목은 숨겼습니다.";

@@ -26,6 +26,7 @@ type FailureCacheEntry = {
 
 const candleCache = new Map<string, CandleCacheEntry>();
 const failureCache = new Map<string, FailureCacheEntry>();
+const dailyStartDate = "2016-01-01";
 const candleCacheTtlMs = 6 * 60 * 60 * 1000;
 const failureCooldownMs = 60 * 60 * 1000;
 
@@ -113,7 +114,8 @@ async function fetchDailyCandles(symbol: string): Promise<CandlePoint[] | null> 
   const url = new URL("https://api.twelvedata.com/time_series");
   url.searchParams.set("symbol", symbol);
   url.searchParams.set("interval", "1day");
-  url.searchParams.set("outputsize", "40");
+  url.searchParams.set("start_date", dailyStartDate);
+  url.searchParams.set("outputsize", "5000");
   url.searchParams.set("apikey", process.env.TWELVE_DATA_API_KEY ?? "");
 
   try {
@@ -140,7 +142,7 @@ async function fetchDailyCandles(symbol: string): Promise<CandlePoint[] | null> 
     }
 
     const candles = payload.values
-      .map((row) => {
+      .map((row): CandlePoint | null => {
         const open = toNumber(row.open);
         const high = toNumber(row.high);
         const low = toNumber(row.low);
@@ -152,6 +154,7 @@ async function fetchDailyCandles(symbol: string): Promise<CandlePoint[] | null> 
 
         return {
           close,
+          date: row.datetime,
           high,
           label: formatDateLabel(row.datetime),
           low,
@@ -159,8 +162,7 @@ async function fetchDailyCandles(symbol: string): Promise<CandlePoint[] | null> 
         };
       })
       .filter((point): point is CandlePoint => Boolean(point))
-      .reverse()
-      .slice(-20);
+      .reverse();
 
     if (candles.length === 0) {
       rememberFailure(symbol, "Twelve Data daily values were empty.");

@@ -29,6 +29,7 @@ type FailureCacheEntry = {
 
 const candleCache = new Map<string, CandleCacheEntry>();
 const failureCache = new Map<string, FailureCacheEntry>();
+const dailyStartDate = "2016-01-01";
 const candleCacheTtlMs = 6 * 60 * 60 * 1000;
 const failureCooldownMs = 6 * 60 * 60 * 1000;
 
@@ -94,7 +95,7 @@ async function fetchDailyCandles(symbol: string): Promise<CandlePoint[] | null> 
   const url = new URL("https://www.alphavantage.co/query");
   url.searchParams.set("function", "TIME_SERIES_DAILY");
   url.searchParams.set("symbol", symbol);
-  url.searchParams.set("outputsize", "compact");
+  url.searchParams.set("outputsize", "full");
   url.searchParams.set("apikey", process.env.ALPHA_VANTAGE_API_KEY ?? "");
 
   try {
@@ -126,7 +127,7 @@ async function fetchDailyCandles(symbol: string): Promise<CandlePoint[] | null> 
     }
 
     const candles = Object.entries(rows)
-      .map(([date, row]) => {
+      .map(([date, row]): CandlePoint | null => {
         const open = toNumber(row["1. open"]);
         const high = toNumber(row["2. high"]);
         const low = toNumber(row["3. low"]);
@@ -137,6 +138,7 @@ async function fetchDailyCandles(symbol: string): Promise<CandlePoint[] | null> 
         }
 
         return {
+          date,
           label: formatDateLabel(date),
           open,
           high,
@@ -145,8 +147,8 @@ async function fetchDailyCandles(symbol: string): Promise<CandlePoint[] | null> 
         };
       })
       .filter((point): point is CandlePoint => Boolean(point))
-      .reverse()
-      .slice(-20);
+      .filter((point) => !point.date || point.date >= dailyStartDate)
+      .reverse();
 
     if (candles.length === 0) {
       rememberFailure(symbol, "Alpha Vantage daily rows were empty.");

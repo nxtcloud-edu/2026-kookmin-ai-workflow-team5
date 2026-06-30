@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type WheelEvent } from "react";
+import {
+  chartRangeOptions,
+  chartZoomLevels,
+  filterByDateRange,
+  formatDateForChart,
+  type ChartRangeKey
+} from "@/lib/chartRanges";
 import type { LinePoint } from "@/lib/mockData";
 
 type DataPointChartProps = {
@@ -14,25 +21,6 @@ const MA_CONFIGS = [
   { days: 10, cls: "ma10", label: "10일" },
   { days: 20, cls: "ma20", label: "20일" },
 ] as const;
-
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
-
-const RANGE_OPTIONS = [
-  { key: "all", label: "전체", days: null },
-  { key: "5y", label: "5년", days: 365 * 5 },
-  { key: "1y", label: "1년", days: 365 },
-  { key: "6m", label: "6개월", days: 183 },
-  { key: "1m", label: "1개월", days: 31 }
-] as const;
-
-const ZOOM_LEVELS = [
-  { label: "압축", gap: 2.4 },
-  { label: "기본", gap: 5 },
-  { label: "확대", gap: 9 },
-  { label: "상세", gap: 14 }
-] as const;
-
-type RangeKey = (typeof RANGE_OPTIONS)[number]["key"];
 
 function calcMA(points: LinePoint[], window: number) {
   return points.map((_, i) => {
@@ -70,63 +58,21 @@ function formatChartValue(value: number) {
   });
 }
 
-function getPointTime(point: LinePoint) {
-  if (!point.date) {
-    return null;
-  }
-
-  const parsed = Date.parse(`${point.date}T00:00:00`);
-
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function filterByRange(points: LinePoint[], days: number | null) {
-  if (!days) {
-    return points;
-  }
-
-  const latestPoint = points.at(-1);
-  const latestTime = latestPoint ? getPointTime(latestPoint) : null;
-
-  if (!latestTime) {
-    return points;
-  }
-
-  const threshold = latestTime - days * MS_PER_DAY;
-  const rangedPoints = points.filter((point) => {
-    const pointTime = getPointTime(point);
-
-    return pointTime == null || pointTime >= threshold;
-  });
-
-  return rangedPoints.length >= 2 ? rangedPoints : points;
-}
-
 function formatPointLabel(point: LinePoint, mode: "full" | "axis" = "full") {
-  if (!point.date) {
-    return point.label;
-  }
-
-  const [year, month, day] = point.date.split("-");
-
-  if (mode === "axis") {
-    return `${year}.${Number(month)}`;
-  }
-
-  return `${year}.${Number(month)}.${Number(day)}`;
+  return formatDateForChart(point.date, point.label, mode);
 }
 
 export function DataPointChart({ title, subtitle, points }: DataPointChartProps) {
-  const [rangeKey, setRangeKey] = useState<RangeKey>("all");
+  const [rangeKey, setRangeKey] = useState<ChartRangeKey>("all");
   const [zoomIndex, setZoomIndex] = useState(1);
   const scrollerRef = useRef<HTMLDivElement>(null);
 
-  const selectedRange = RANGE_OPTIONS.find((option) => option.key === rangeKey) ?? RANGE_OPTIONS[0];
+  const selectedRange = chartRangeOptions.find((option) => option.key === rangeKey) ?? chartRangeOptions[0];
   const chartPoints = useMemo(
-    () => filterByRange(points, selectedRange.days),
+    () => filterByDateRange(points, selectedRange.days, (point) => point.date),
     [points, selectedRange.days]
   );
-  const zoomLevel = ZOOM_LEVELS[zoomIndex] ?? ZOOM_LEVELS[1];
+  const zoomLevel = chartZoomLevels[zoomIndex] ?? chartZoomLevels[1];
   const displayPoints = chartPoints.length > 0 ? chartPoints : [{ label: "-", value: 0 }];
 
   const minWidth = 640;
@@ -229,7 +175,7 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
 
       <div className="chartControls" aria-label="차트 보기 옵션">
         <div className="segmentedControl" aria-label="표시 기간">
-          {RANGE_OPTIONS.map((option) => (
+          {chartRangeOptions.map((option) => (
             <button
               aria-pressed={rangeKey === option.key}
               className={rangeKey === option.key ? "active" : ""}
@@ -246,7 +192,7 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
           <span>축소</span>
           <input
             aria-label="차트 확대 비율"
-            max={ZOOM_LEVELS.length - 1}
+            max={chartZoomLevels.length - 1}
             min="0"
             onChange={(event) => setZoomIndex(Number(event.target.value))}
             step="1"
