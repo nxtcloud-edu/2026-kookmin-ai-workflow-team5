@@ -3,8 +3,10 @@ import {
   shouldRequestAlphaVantage
 } from "./alphaVantageClient";
 import { hydrateMarketIndexWithFred } from "./fredClient";
+import { analyzeStockWithGroq } from "./groq";
 import { fetchSystematicNews, fetchUnsystematicNews } from "./news";
 import { getStockBySymbol, marketIndex, stocks, type NewsItem, type Stock } from "./mockData";
+import type { Recommendation } from "./recommendation";
 import { hydrateStockWithTwelveData, shouldRequestTwelveData } from "./twelveDataClient";
 
 export type DataSource = "live" | "partial";
@@ -20,6 +22,7 @@ export type MarketPayload = {
 
 export type StockPayload = {
   stock: Stock;
+  recommendation: Recommendation | null;
   source: DataSource;
   updatedAt: string;
   message: string;
@@ -161,12 +164,17 @@ export async function getStockPayload(symbol: string): Promise<StockPayload | nu
   ).catch(() => []);
   const source: DataSource = stockNews.length > 0 ? "live" : "partial";
 
+  const stockWithNews: Stock = {
+    ...liveStock,
+    highlights: highlightsFromNews(stockNews),
+    news: stockNews
+  };
+
+  const recommendation = await analyzeStockWithGroq(stockWithNews).catch(() => null);
+
   return {
-    stock: {
-      ...liveStock,
-      highlights: highlightsFromNews(stockNews),
-      news: stockNews
-    },
+    stock: stockWithNews,
+    recommendation,
     source,
     updatedAt: getTimestamp(),
     message: messageFromSource(source)
