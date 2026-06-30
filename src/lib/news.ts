@@ -43,9 +43,12 @@ function parseRSS(xml: string, prefix: string): NewsItem[] {
 
     if (!title) continue;
 
-    const date = pubDate
-      ? new Date(pubDate).toISOString().split("T")[0]
-      : new Date().toISOString().split("T")[0];
+    const pubDateObj = pubDate ? new Date(pubDate) : new Date();
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 10);
+    if (pubDateObj < cutoff) continue;
+
+    const date = pubDateObj.toISOString().split("T")[0];
 
     items.push({
       id: `${prefix}-${i++}`,
