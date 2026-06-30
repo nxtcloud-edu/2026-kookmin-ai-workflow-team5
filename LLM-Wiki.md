@@ -21,7 +21,7 @@
 
 - `src/lib/mockData.ts`
 - 라우팅, 종목명, 발표용 지표 설명에 필요한 정적 카탈로그
-- Apple, Microsoft, NVIDIA, Tesla 종목 식별자
+- Apple, Microsoft, NVIDIA, Tesla, Alphabet, Amazon, Meta Platforms, JPMorgan Chase 종목 식별자
 - 화면 표시 가격, 차트, 뉴스는 API/RSS 조회 성공값만 사용
 
 ## API 연동 구성
@@ -68,12 +68,14 @@
 - 반응형 미니멀 대시보드 UI
 - SVG 기반 지수 장기 선 그래프, 사각형 마커, 이동평균선, 기간 선택, 줌 슬라이더, 가로 스크롤 탐색
 - SVG 기반 종목 봉차트 컴포넌트와 3일 이동평균선
+- 한국 주식 차트 관례에 맞춰 상승 구간은 빨간색, 하락 구간은 파란색 계열로 표시
 - 종목별 상세 라우팅
 - 클릭 가능한 뉴스 링크와 `noopener noreferrer` 적용
 - 교육용 데모 안내 문구
 - API data/partial data 상태 표시
 - 초기 샘플 initialData 제거와 loading/error 상태 추가
 - 수동 새로고침 버튼과 1분 간격 자동 조회
+- 미국 종목 카탈로그 4개 추가로 총 8개 종목 제공
 
 ## 실행 방법
 
@@ -103,6 +105,6 @@ cp .env.example .env.local
 
 ## 남은 개선 사항
 
-- 발표 주제에 맞춘 종목 추가
+- 발표 주제별 종목 필터와 섹터 그룹 표시
 - 정적 카탈로그 명칭을 실제 데이터 소스 구조에 맞춰 분리
 - 추천 점수 계산 기준을 발표용 설명 슬라이드와 맞춰 조정
