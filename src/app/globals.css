@@ -136,7 +136,6 @@ p {
   letter-spacing: 0;
 }
 
-.demoBadge,
 .dataBadge,
 .pill {
   display: inline-flex;
@@ -148,11 +147,6 @@ p {
   font-weight: 700;
   letter-spacing: 0;
   white-space: nowrap;
-}
-
-.demoBadge {
-  color: var(--blue);
-  background: var(--blue-soft);
 }
 
 .dataBadge.live {

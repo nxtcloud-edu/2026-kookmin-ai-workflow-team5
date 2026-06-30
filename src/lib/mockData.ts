@@ -86,14 +86,6 @@ function createCandles(points: ClosePoint[], spread: number): CandlePoint[] {
 
 export type FearGreedLevel = "extreme-fear" | "fear" | "neutral" | "greed" | "extreme-greed";
 
-export const fearGreedIndex = {
-  value: 62,
-  level: "greed" as FearGreedLevel,
-  label: "탐욕",
-  updatedAt: "2026-06-30",
-  description: "투자자 심리가 탐욕 구간에 진입했습니다. 과열 여부를 함께 확인하세요."
-};
-
 export const marketIndex = {
   code: "S&P 500",
   name: "S&P 500",
@@ -115,42 +107,6 @@ export const marketIndex = {
     { label: "6/30", value: 5487.03 }
   ]
 };
-
-export const systematicNews: NewsItem[] = [
-  {
-    id: "sys-1",
-    title: "미국 장기금리 안정 기대가 성장주 부담을 낮춤",
-    source: "Mock Macro Brief",
-    date: "2026-06-30",
-    sentiment: "positive",
-    impact: "호재",
-    summary:
-      "금리가 급등하지 않는 환경은 미래 이익 비중이 큰 기술주 밸류에이션에 우호적입니다.",
-    url: "https://example.com/mock-news/us-rates-growth"
-  },
-  {
-    id: "sys-2",
-    title: "달러 강세는 해외 매출 비중이 큰 기업의 환산 이익 부담",
-    source: "Mock FX Desk",
-    date: "2026-06-30",
-    sentiment: "negative",
-    impact: "악재",
-    summary:
-      "미국 대형주는 해외 매출 비중이 높아 달러 강세가 실적 환산에 부담으로 작용할 수 있습니다.",
-    url: "https://example.com/mock-news/us-dollar-risk"
-  },
-  {
-    id: "sys-3",
-    title: "AI 인프라 투자 확대로 반도체와 클라우드 수요 기대 지속",
-    source: "Mock Tech Watch",
-    date: "2026-06-29",
-    sentiment: "positive",
-    impact: "호재",
-    summary:
-      "데이터센터 투자 증가는 반도체, 클라우드, 소프트웨어 기업에 공통 호재로 분류됩니다.",
-    url: "https://example.com/mock-news/ai-infra-demand"
-  }
-];
 
 export const stocks: Stock[] = [
   {

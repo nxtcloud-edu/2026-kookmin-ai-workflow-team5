@@ -23,10 +23,15 @@
 - 라우팅, 종목명, 발표용 지표 설명에 필요한 정적 카탈로그
 - Apple, Microsoft, NVIDIA, Tesla, Alphabet, Amazon, Meta Platforms, JPMorgan Chase 종목 식별자
 - 화면 표시 가격, 차트, 뉴스는 API/RSS 조회 성공값만 사용
+- 유지 대상: 종목 라우팅, 기업명, 시장/섹터, PER/SML 기본 지표, API 가격 데이터 산출 전 기본 타입 구조
+- 삭제 대상: 사용처가 없는 정적 공포탐욕 객체, Google News RSS로 대체된 정적 체계적 뉴스 배열, 미사용 CSS 배지 클래스
 
 ## API 연동 구성
 
 - `.env.local`에 FRED, Twelve Data API 키와 Alpha Vantage 백업 API 키를 설정
+- 필수 로컬 키: `FRED_API_KEY`, `TWELVE_DATA_API_KEY`, `ALPHA_VANTAGE_API_KEY`
+- 선택 로컬 키: `GROQ_API_KEY`
+- 제거 대상 로컬 키: 현재 코드에서 읽지 않는 KIS, Naver, Vercel CLI 임시 토큰 항목
 - `src/app/api/market/route.ts`: 메인 페이지용 시장/종목/뉴스 데이터 조회
 - `src/app/api/stocks/[symbol]/route.ts`: 종목 상세 데이터 조회
 - `src/lib/fredClient.ts`: FRED 공식 API `SP500` 기반 S&P 500 일별 종가를 2016-01-01 이후로 조회

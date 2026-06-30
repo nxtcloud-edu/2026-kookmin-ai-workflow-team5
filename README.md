@@ -2,6 +2,10 @@
 
 미국 주식 초보자를 위한 발표용 로컬 위험 정보 대시보드입니다. 첫 화면은 loading 상태로 시작하며, 서버 Route Handler가 FRED 지수 데이터, Twelve Data/Alpha Vantage 주가 API, Google News RSS를 조회한 뒤 실데이터만 표시합니다.
 
+## 배포 주소
+
+https://sigebert111-boot-charting.vercel.app
+
 ## 주요 기능
 
 - FRED 기반 S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, 줌/가로 스크롤 탐색
