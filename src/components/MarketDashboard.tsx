@@ -6,6 +6,7 @@ import { FearGreedBanner } from "@/components/FearGreedWidget";
 import { LoadingState } from "@/components/LoadingState";
 import { NewsList } from "@/components/NewsList";
 import { StockCard } from "@/components/StockCard";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { formatIndex, formatPercent } from "@/lib/format";
 import type { MarketPayload } from "@/lib/marketService";
 
@@ -86,6 +87,7 @@ export function MarketDashboard() {
           <h1>미국 주식 위험 대시보드</h1>
         </div>
         <div className="statusActions">
+          <ThemeToggle />
           <p className={`dataBadge ${data.source}`}>
             {data.source === "live" ? "API data" : "partial data"}
           </p>
