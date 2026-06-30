@@ -72,7 +72,6 @@ async function fetchGoogleNewsRaw(query: string, prefix: string, limit = 20): Pr
 }
 
 // 체계적 위험: 넓게 수집 후 Groq이 현재 가장 중요한 이슈 감지 → 관련 기사 6개 선별 + 분석
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function fetchSystematicNews(_query?: string, prefix = "sys"): Promise<NewsItem[]> {
   const broadItems = await fetchGoogleNewsRaw("economy stock market interest rates inflation currency", prefix, 20);
   const { selectedIndices, results } = await detectTopicAndAnalyze(

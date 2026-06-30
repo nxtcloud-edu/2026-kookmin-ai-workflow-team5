@@ -57,8 +57,8 @@
 
 ## 화면 구조
 
-- `/`: FRED S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 시장 공통 뉴스, 종목 카드 목록, `/api/market` 1분 간격 조회
-- `/stocks/[symbol]`: 선택 종목의 2016-01-01 이후 장기 봉차트, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 추천 카드, SML/PER/RSI, 개별 뉴스, `/api/stocks/[symbol]` 1분 간격 조회
+- `/`: FRED S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 시장 공통 뉴스, 종목 카드 목록, 라이트/다크 모드 토글, `/api/market` 1분 간격 조회
+- `/stocks/[symbol]`: 선택 종목의 2016-01-01 이후 장기 봉차트, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 추천 카드, SML/PER/RSI, 개별 뉴스, 라이트/다크 모드 토글, `/api/stocks/[symbol]` 1분 간격 조회
 - `/loading.tsx`, `/stocks/[symbol]/loading.tsx`: 실데이터 조회 중 loading page 표시
 - `origin/feat/team5-member`의 Groq 뉴스 분석과 10일 뉴스 필터링 커밋을 반영하되, 추가 npm 패키지 없이 native `fetch` 기반 선택 호출로 통합
 
@@ -76,6 +76,7 @@
 - 초기 샘플 initialData 제거와 loading/error 상태 추가
 - 수동 새로고침 버튼과 1분 간격 자동 조회
 - 미국 종목 카탈로그 4개 추가로 총 8개 종목 제공
+- 라이트/다크 테마 토글과 localStorage 기반 테마 유지
 
 ## 실행 방법
 
@@ -103,6 +104,7 @@ cp .env.example .env.local
 - Twelve Data 1차 provider 추가 후 `npm run lint`, `npm run build` 통과
 - `TWELVE_DATA_API_KEY` 미설정 상태에서 기존 `localhost:3000`의 `/api/market` 응답 `source: partial`, `indexCode: FRED:SP500`, `newsCount: 6` 확인
 - 종목 장기 차트, 공통 기간 옵션, 조회 문구 변경 후 `npm run lint`, `npm run build` 통과
+- 라이트/다크 테마 토글 추가 후 `npm run lint`, `git diff --check`, `npm run build` 통과
 
 ## 남은 개선 사항
 
