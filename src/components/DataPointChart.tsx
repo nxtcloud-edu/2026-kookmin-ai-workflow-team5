@@ -162,7 +162,16 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
     x: scaleX(index),
     y: scaleY(point.value)
   }));
-  const indexLine = plottedPoints.map((point) => `${point.x},${point.y}`).join(" ");
+  const indexSegments = plottedPoints.slice(1).map((point, index) => {
+    const previous = plottedPoints[index];
+    const direction = point.value > previous.value ? "up" : point.value < previous.value ? "down" : "flat";
+
+    return {
+      direction,
+      key: `${previous.date ?? previous.label}-${point.date ?? point.label}`,
+      points: `${previous.x},${previous.y} ${point.x},${point.y}`
+    };
+  });
   const axisMarkerStep = Math.max(1, Math.ceil(180 / zoomLevel.gap));
   const squareMarkerStep = Math.max(1, Math.ceil(12 / zoomLevel.gap));
   const axisMarkers = plottedPoints.filter(
@@ -249,7 +258,8 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
       </div>
 
       <div className="chartLegend" aria-label="차트 범례">
-        <span><i className="legendSquare index" />FRED 종가선</span>
+        <span><i className="legendBox up" />상승 구간</span>
+        <span><i className="legendBox down" />하락 구간</span>
         {MA_CONFIGS.map((cfg) => (
           <span key={cfg.days}>
             <i className={`legendLine ${cfg.cls}`} />
@@ -275,7 +285,13 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
           <line className="axis" x1={padding} x2={chartWidth - padding} y1={height - padding} y2={height - padding} />
           <line className="axis" x1={padding} x2={padding} y1={padding} y2={height - padding} />
 
-          <polyline className="indexLine" points={indexLine} />
+          {indexSegments.map((segment) => (
+            <polyline
+              className={`indexSegment ${segment.direction}`}
+              key={segment.key}
+              points={segment.points}
+            />
+          ))}
 
           {/* 이동평균선 — 긴 것 먼저 */}
           {[...maLines].reverse().map((pts, ri) => {
@@ -286,6 +302,14 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
           {/* 종가선 사각형 마커 */}
           {plottedPoints.map((point, index) => {
             const isLatest = index === plottedPoints.length - 1;
+            const previous = plottedPoints[index - 1];
+            const direction = !previous
+              ? "flat"
+              : point.value > previous.value
+                ? "up"
+                : point.value < previous.value
+                  ? "down"
+                  : "flat";
             const shouldShowMarker = index % squareMarkerStep === 0 || isLatest;
             const markerSize = isLatest ? 9 : 7;
 
@@ -294,7 +318,7 @@ export function DataPointChart({ title, subtitle, points }: DataPointChartProps)
             }
 
             return (
-              <g className={`dataPoint${isLatest ? " latest" : ""}`} key={`${point.date ?? point.label}-${point.value}`}>
+              <g className={`dataPoint ${direction}${isLatest ? " latest" : ""}`} key={`${point.date ?? point.label}-${point.value}`}>
                 <title>{formatPointLabel(point)}: {formatChartValue(point.value)}</title>
                 <rect
                   height={markerSize}

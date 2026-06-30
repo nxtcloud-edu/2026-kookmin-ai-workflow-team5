@@ -8,9 +8,9 @@ type CandlestickChartProps = {
 };
 
 const MA_CONFIGS = [
-  { days: 3,  cls: "ma3",  label: "3일",  color: "var(--blue)" },
-  { days: 5,  cls: "ma5",  label: "5일",  color: "var(--green)" },
-  { days: 10, cls: "ma10", label: "10일", color: "var(--amber)" },
+  { days: 3,  cls: "ma3",  label: "3일",  color: "var(--green)" },
+  { days: 5,  cls: "ma5",  label: "5일",  color: "var(--amber)" },
+  { days: 10, cls: "ma10", label: "10일", color: "var(--violet)" },
 ] as const;
 
 function calcMA(points: CandlePoint[], window: number) {

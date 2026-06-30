@@ -427,6 +427,282 @@ export const stocks: Stock[] = [
         url: "https://example.com/mock-news/tesla-price-competition"
       }
     ]
+  },
+  {
+    symbol: "GOOGL",
+    name: "Alphabet",
+    market: "NASDAQ",
+    sector: "Digital Advertising",
+    currentPrice: 176.2,
+    priceChangePercent: 0.74,
+    riskScore: 48,
+    volatility: 21,
+    chart: createCandles(
+      [
+        { label: "6/17", close: 169.8 },
+        { label: "6/18", close: 171.2 },
+        { label: "6/19", close: 170.4 },
+        { label: "6/20", close: 172.8 },
+        { label: "6/23", close: 174.1 },
+        { label: "6/24", close: 173.5 },
+        { label: "6/25", close: 175.3 },
+        { label: "6/26", close: 176.8 },
+        { label: "6/27", close: 174.9 },
+        { label: "6/30", close: 176.2 }
+      ],
+      2.1
+    ),
+    metrics: {
+      sml: {
+        beta: 1.06,
+        expectedReturn: 8.7,
+        marketReturn: 7.8,
+        riskFreeRate: 4.3,
+        alpha: 0.4
+      },
+      per: {
+        value: 24.6,
+        sectorAverage: 27.8
+      },
+      rsi: {
+        value: 59
+      }
+    },
+    highlights: {
+      positive: "검색 광고와 클라우드 AI 수요",
+      negative: "광고 경기와 규제 리스크"
+    },
+    news: [
+      {
+        id: "GOOGL-1",
+        title: "AI 검색 기능 확대가 광고와 클라우드 기대를 지지",
+        source: "Mock Platform Brief",
+        date: "2026-06-30",
+        sentiment: "positive",
+        impact: "호재",
+        summary:
+          "검색과 클라우드에 AI 기능이 붙으면 광고 효율과 기업용 수요가 함께 개선될 수 있습니다.",
+        url: "https://example.com/mock-news/alphabet-ai-search"
+      },
+      {
+        id: "GOOGL-2",
+        title: "플랫폼 규제와 광고 경기 둔화는 확인 요인",
+        source: "Mock Regulation Watch",
+        date: "2026-06-28",
+        sentiment: "negative",
+        impact: "악재",
+        summary:
+          "검색과 광고 시장 규제가 강화되면 수익성 기대와 밸류에이션에 부담이 생길 수 있습니다.",
+        url: "https://example.com/mock-news/alphabet-regulation"
+      }
+    ]
+  },
+  {
+    symbol: "AMZN",
+    name: "Amazon",
+    market: "NASDAQ",
+    sector: "E-Commerce & Cloud",
+    currentPrice: 187.5,
+    priceChangePercent: 0.91,
+    riskScore: 50,
+    volatility: 24,
+    chart: createCandles(
+      [
+        { label: "6/17", close: 180.6 },
+        { label: "6/18", close: 182.4 },
+        { label: "6/19", close: 181.7 },
+        { label: "6/20", close: 184.2 },
+        { label: "6/23", close: 185.1 },
+        { label: "6/24", close: 184.6 },
+        { label: "6/25", close: 186.4 },
+        { label: "6/26", close: 188.1 },
+        { label: "6/27", close: 186.7 },
+        { label: "6/30", close: 187.5 }
+      ],
+      2.8
+    ),
+    metrics: {
+      sml: {
+        beta: 1.22,
+        expectedReturn: 9.8,
+        marketReturn: 7.8,
+        riskFreeRate: 4.3,
+        alpha: 0.3
+      },
+      per: {
+        value: 39.2,
+        sectorAverage: 41.5
+      },
+      rsi: {
+        value: 62
+      }
+    },
+    highlights: {
+      positive: "AWS 성장과 리테일 마진 개선",
+      negative: "물류비와 소비 둔화 부담"
+    },
+    news: [
+      {
+        id: "AMZN-1",
+        title: "AWS 수요와 리테일 효율화가 이익 개선 기대를 높임",
+        source: "Mock Retail Cloud Note",
+        date: "2026-06-30",
+        sentiment: "positive",
+        impact: "호재",
+        summary:
+          "클라우드 성장과 물류 효율화가 동시에 나타나면 매출과 영업이익률을 함께 확인할 수 있습니다.",
+        url: "https://example.com/mock-news/amazon-aws-margin"
+      },
+      {
+        id: "AMZN-2",
+        title: "배송비와 소비 둔화는 단기 이익률 부담",
+        source: "Mock Consumer Watch",
+        date: "2026-06-29",
+        sentiment: "negative",
+        impact: "악재",
+        summary:
+          "소비 지출이 둔화되거나 배송 비용이 늘면 리테일 부문의 이익 개선 속도가 느려질 수 있습니다.",
+        url: "https://example.com/mock-news/amazon-consumer-cost"
+      }
+    ]
+  },
+  {
+    symbol: "META",
+    name: "Meta Platforms",
+    market: "NASDAQ",
+    sector: "Social Platforms",
+    currentPrice: 514.8,
+    priceChangePercent: -0.22,
+    riskScore: 54,
+    volatility: 27,
+    chart: createCandles(
+      [
+        { label: "6/17", close: 506.2 },
+        { label: "6/18", close: 510.4 },
+        { label: "6/19", close: 508.8 },
+        { label: "6/20", close: 516.1 },
+        { label: "6/23", close: 518.7 },
+        { label: "6/24", close: 515.5 },
+        { label: "6/25", close: 519.2 },
+        { label: "6/26", close: 521.0 },
+        { label: "6/27", close: 516.4 },
+        { label: "6/30", close: 514.8 }
+      ],
+      5.2
+    ),
+    metrics: {
+      sml: {
+        beta: 1.18,
+        expectedReturn: 9.5,
+        marketReturn: 7.8,
+        riskFreeRate: 4.3,
+        alpha: 0.1
+      },
+      per: {
+        value: 26.8,
+        sectorAverage: 29.4
+      },
+      rsi: {
+        value: 55
+      }
+    },
+    highlights: {
+      positive: "AI 광고 효율과 이용자 참여",
+      negative: "규제와 대규모 투자 비용"
+    },
+    news: [
+      {
+        id: "META-1",
+        title: "AI 광고 추천 개선이 매출 효율을 높일 가능성",
+        source: "Mock Ad Tech Brief",
+        date: "2026-06-30",
+        sentiment: "positive",
+        impact: "호재",
+        summary:
+          "광고 타기팅과 추천 품질이 개선되면 같은 이용자 기반에서도 광고 매출 효율이 높아질 수 있습니다.",
+        url: "https://example.com/mock-news/meta-ai-ads"
+      },
+      {
+        id: "META-2",
+        title: "규제 조사와 인프라 투자는 비용 부담 요인",
+        source: "Mock Platform Risk",
+        date: "2026-06-28",
+        sentiment: "negative",
+        impact: "악재",
+        summary:
+          "개인정보 규제와 AI 인프라 투자가 동시에 커지면 단기 비용 부담을 확인해야 합니다.",
+        url: "https://example.com/mock-news/meta-regulation-capex"
+      }
+    ]
+  },
+  {
+    symbol: "JPM",
+    name: "JPMorgan Chase",
+    market: "NYSE",
+    sector: "Banking",
+    currentPrice: 202.6,
+    priceChangePercent: -0.31,
+    riskScore: 44,
+    volatility: 18,
+    chart: createCandles(
+      [
+        { label: "6/17", close: 206.1 },
+        { label: "6/18", close: 205.4 },
+        { label: "6/19", close: 204.2 },
+        { label: "6/20", close: 203.8 },
+        { label: "6/23", close: 204.7 },
+        { label: "6/24", close: 203.1 },
+        { label: "6/25", close: 202.4 },
+        { label: "6/26", close: 203.5 },
+        { label: "6/27", close: 202.9 },
+        { label: "6/30", close: 202.6 }
+      ],
+      2.2
+    ),
+    metrics: {
+      sml: {
+        beta: 1.08,
+        expectedReturn: 8.8,
+        marketReturn: 7.8,
+        riskFreeRate: 4.3,
+        alpha: -0.1
+      },
+      per: {
+        value: 12.4,
+        sectorAverage: 13.6
+      },
+      rsi: {
+        value: 48
+      }
+    },
+    highlights: {
+      positive: "순이자이익과 신용 건전성",
+      negative: "상업용 부동산과 규제 부담"
+    },
+    news: [
+      {
+        id: "JPM-1",
+        title: "견조한 예대마진과 신용 품질이 방어력을 높임",
+        source: "Mock Bank Brief",
+        date: "2026-06-30",
+        sentiment: "positive",
+        impact: "호재",
+        summary:
+          "대형 은행은 예금 기반과 신용 관리가 안정적이면 경기 둔화 국면에서도 상대적으로 버틸 수 있습니다.",
+        url: "https://example.com/mock-news/jpm-net-interest"
+      },
+      {
+        id: "JPM-2",
+        title: "상업용 부동산 익스포저와 규제 비용은 부담",
+        source: "Mock Credit Watch",
+        date: "2026-06-29",
+        sentiment: "negative",
+        impact: "악재",
+        summary:
+          "부동산 대출 건전성이나 자본 규제가 강화되면 은행 이익과 배당 여력을 확인해야 합니다.",
+        url: "https://example.com/mock-news/jpm-credit-risk"
+      }
+    ]
   }
 ];
 

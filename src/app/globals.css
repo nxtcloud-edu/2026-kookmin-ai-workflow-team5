@@ -13,6 +13,11 @@
   --red-soft: #fff0f1;
   --blue: #2563eb;
   --blue-soft: #edf3ff;
+  --chart-up: #e5484d;
+  --chart-up-soft: #fff0f1;
+  --chart-down: #2563eb;
+  --chart-down-soft: #edf3ff;
+  --violet: #7c3aed;
   --amber: #b7791f;
   --amber-soft: #fff7e6;
   --shadow: 0 18px 45px rgba(22, 30, 46, 0.08);
@@ -354,11 +359,11 @@ p {
 }
 
 .legendBox.up {
-  background: var(--green);
+  background: var(--chart-up);
 }
 
 .legendBox.down {
-  background: var(--red);
+  background: var(--chart-down);
 }
 
 .legendSquare {
@@ -423,22 +428,52 @@ p {
   stroke-width: 3;
 }
 
-.dataPointChart .indexLine {
+.dataPointChart .indexSegment {
   fill: none;
-  stroke: var(--green);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2;
 }
 
+.dataPointChart .indexSegment.up {
+  stroke: var(--chart-up);
+}
+
+.dataPointChart .indexSegment.down {
+  stroke: var(--chart-down);
+}
+
+.dataPointChart .indexSegment.flat {
+  stroke: var(--muted);
+}
+
 .dataPointChart .dataPoint rect {
   fill: var(--surface);
-  stroke: var(--green);
   stroke-width: 2;
 }
 
-.dataPointChart .dataPoint.latest rect {
-  fill: var(--green);
+.dataPointChart .dataPoint.up rect {
+  stroke: var(--chart-up);
+}
+
+.dataPointChart .dataPoint.down rect {
+  stroke: var(--chart-down);
+}
+
+.dataPointChart .dataPoint.flat rect {
+  stroke: var(--muted);
+}
+
+.dataPointChart .dataPoint.latest.up rect {
+  fill: var(--chart-up);
+}
+
+.dataPointChart .dataPoint.latest.down rect {
+  fill: var(--chart-down);
+}
+
+.dataPointChart .dataPoint.latest.flat rect {
+  fill: var(--muted);
 }
 
 .dataPointChart .axisLabel {
@@ -455,14 +490,14 @@ p {
 
 .candleChart .candle.up .wick,
 .candleChart .candle.up rect {
-  fill: var(--green);
-  stroke: var(--green);
+  fill: var(--chart-up);
+  stroke: var(--chart-up);
 }
 
 .candleChart .candle.down .wick,
 .candleChart .candle.down rect {
-  fill: var(--red);
-  stroke: var(--red);
+  fill: var(--chart-down);
+  stroke: var(--chart-down);
 }
 
 .candleChart .candle.flat .wick,
@@ -478,22 +513,22 @@ p {
 }
 
 /* DataPointChart MA 색상 (5/10/20일) */
-.dataPointChart .movingAverage.ma5  { stroke: var(--blue); }
+.dataPointChart .movingAverage.ma5  { stroke: var(--green); }
 .dataPointChart .movingAverage.ma10 { stroke: var(--amber); }
-.dataPointChart .movingAverage.ma20 { stroke: #7c3aed; }
+.dataPointChart .movingAverage.ma20 { stroke: var(--violet); }
 
 /* DataPointChart MA 범례 */
-.legendLine.ma5  { background: var(--blue); }
+.legendLine.ma5  { background: var(--green); }
 .legendLine.ma10 { background: var(--amber); }
-.legendLine.ma20 { background: #7c3aed; }
+.legendLine.ma20 { background: var(--violet); }
 
 /* 골든/데드 크로스 링 마커 */
 .crossDot {
   fill: none;
   stroke-width: 2.5;
 }
-.crossDot.golden { stroke: var(--green); }
-.crossDot.dead   { stroke: var(--red); }
+.crossDot.golden { stroke: var(--chart-up); }
+.crossDot.dead   { stroke: var(--chart-down); }
 
 /* 추세 필 */
 .trendPill {
@@ -505,8 +540,8 @@ p {
   font-weight: 700;
   white-space: nowrap;
 }
-.trendPill.positive { color: var(--green); background: var(--green-soft); }
-.trendPill.negative { color: var(--red);   background: var(--red-soft); }
+.trendPill.positive { color: var(--chart-up); background: var(--chart-up-soft); }
+.trendPill.negative { color: var(--chart-down); background: var(--chart-down-soft); }
 .trendPill.neutral  { color: var(--amber); background: var(--amber-soft); }
 
 /* 차트 헤더 우측 (추세필 + 날짜 범위) */
