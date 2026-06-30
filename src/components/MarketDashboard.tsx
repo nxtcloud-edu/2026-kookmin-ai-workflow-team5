@@ -6,6 +6,7 @@ import { FearGreedBanner } from "@/components/FearGreedWidget";
 import { LoadingState } from "@/components/LoadingState";
 import { NewsList } from "@/components/NewsList";
 import { StockCard } from "@/components/StockCard";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { formatIndex, formatPercent } from "@/lib/format";
 import type { MarketPayload } from "@/lib/marketService";
 
@@ -86,6 +87,7 @@ export function MarketDashboard() {
           <h1>미국 주식 위험 대시보드</h1>
         </div>
         <div className="statusActions">
+          <ThemeToggle />
           <p className={`dataBadge ${data.source}`}>
             {data.source === "live" ? "API data" : "partial data"}
           </p>
@@ -132,7 +134,7 @@ export function MarketDashboard() {
         <div className="sectionHeader">
           <div>
             <p className="eyebrow">비체계적 위험</p>
-            <h2>미국 종목별 데모 분석</h2>
+            <h2>미국 종목별 위험 분석</h2>
           </div>
           <p>
             비체계적 위험은 특정 기업의 실적, 규제, 제품, 임상 일정처럼 한 종목에

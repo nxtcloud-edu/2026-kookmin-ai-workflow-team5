@@ -71,7 +71,7 @@ export async function analyzeNews(
 
   const raw = await callGroq([
     {
-      content: `You classify stock market news for an educational demo.
+      content: `You classify stock market news for a stock risk dashboard.
 Return only a JSON array. Do not include markdown or extra text.
 
 [

@@ -71,7 +71,7 @@ function createFredMarketIndex(points: LinePoint[]): MarketIndex | null {
     changePercent,
     updatedAt: latest.date ?? new Date().toLocaleString("ko-KR"),
     summary:
-      "FRED의 S&P 500 일별 종가를 2016년부터 현재까지 보여줍니다. 발표용으로 1분마다 화면을 갱신하되 서버는 30분 캐시를 사용합니다.",
+      "FRED의 S&P 500 일별 종가를 2016년부터 현재까지 보여주며, 화면은 1분마다 갱신되고 서버는 30분 캐시를 사용합니다.",
     chart: points
   };
 }

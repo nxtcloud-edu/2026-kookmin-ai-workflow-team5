@@ -33,9 +33,9 @@ export function createRecommendation(stock: Stock): Recommendation {
     score >= 68 ? "관심" : score >= 50 ? "관망" : "주의";
 
   const summaryByStatus: Record<RecommendationStatus, string> = {
-    관심: `${stock.name}은 현재 지표와 뉴스 흐름이 비교적 안정적으로 맞물린 데모 관심 종목입니다.`,
-    관망: `${stock.name}은 긍정 요인과 부담 요인이 함께 있어 추가 확인이 필요한 데모 관망 종목입니다.`,
-    주의: `${stock.name}은 변동성 또는 밸류에이션 부담이 커서 초보자에게는 신중한 확인이 필요한 데모 종목입니다.`
+    관심: `${stock.name}은 현재 지표와 뉴스 흐름이 비교적 안정적으로 맞물린 관심 구간입니다.`,
+    관망: `${stock.name}은 긍정 요인과 부담 요인이 함께 있어 추가 확인이 필요한 관망 구간입니다.`,
+    주의: `${stock.name}은 변동성 또는 밸류에이션 부담이 커서 신중한 확인이 필요한 주의 구간입니다.`
   };
 
   const reasons = [

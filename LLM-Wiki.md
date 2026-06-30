@@ -2,11 +2,11 @@
 
 ## 프로젝트 목표
 
-`aws-charting`은 미국 주식 초보자가 체계적 위험과 비체계적 위험을 구분해서 볼 수 있도록 만든 발표용 로컬 Next.js 대시보드입니다.
+`aws-charting`은 미국 주식 초보자가 체계적 위험과 비체계적 위험을 구분해서 볼 수 있도록 만든 로컬 Next.js 대시보드입니다.
 
 ## 주요 요구사항
 
-- 로컬 발표용으로 실행
+- 로컬 환경에서 실행
 - 첫 화면은 loading 상태이며, FRED 지수 데이터, Twelve Data/Alpha Vantage 주가 API, Google News RSS 조회 성공 후 실데이터만 표시
 - KIS 인증 문제를 피하기 위해 미국 주식 일봉 API는 Twelve Data 우선, Alpha Vantage 백업으로 변경
 - 실시간 WebSocket이 아닌 1분 간격 조회 방식
@@ -14,13 +14,13 @@
 - 메인 페이지에서 지수 차트, 체계적 위험 뉴스, 종목별 요약 제공
 - 종목 상세 페이지를 `/stocks/[symbol]` 별도 라우트로 제공
 - 상세 페이지에서 종목 차트, SML, PER, RSI, 개별 뉴스 제공
-- LLM-like 추천 UI는 실제 LLM 호출 없이 규칙 기반으로 구현
+- 추천 UI는 실제 LLM 호출 없이 규칙 기반 위험 분석으로 구현
 - API 조회 실패 시 정적 fallback 없이 오류 또는 빈 상태 표시
 
 ## 정적 카탈로그 구성
 
 - `src/lib/mockData.ts`
-- 라우팅, 종목명, 발표용 지표 설명에 필요한 정적 카탈로그
+- 라우팅, 종목명, 지표 설명에 필요한 정적 카탈로그
 - Apple, Microsoft, NVIDIA, Tesla, Alphabet, Amazon, Meta Platforms, JPMorgan Chase 종목 식별자
 - 화면 표시 가격, 차트, 뉴스는 API/RSS 조회 성공값만 사용
 
@@ -53,12 +53,12 @@
 - 뉴스 감성, PER의 업종 평균 대비 위치, RSI, SML 알파, 위험 점수, 변동성을 점수화
 - RSI는 Twelve Data 또는 Alpha Vantage 일봉 데이터가 있으면 최신 봉차트 기준으로 재계산
 - 점수에 따라 `관심`, `관망`, `주의` 상태를 표시
-- 자연어 요약처럼 보이지만 실제 LLM API를 호출하지 않는 데모 분석
+- 실제 LLM API를 호출하지 않고 조회 데이터와 규칙 기반 점수로 위험 분석 문구 생성
 
 ## 화면 구조
 
-- `/`: FRED S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 시장 공통 뉴스, 종목 카드 목록, `/api/market` 1분 간격 조회
-- `/stocks/[symbol]`: 선택 종목의 2016-01-01 이후 장기 봉차트, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 추천 카드, SML/PER/RSI, 개별 뉴스, `/api/stocks/[symbol]` 1분 간격 조회
+- `/`: FRED S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 시장 공통 뉴스, 종목 카드 목록, 라이트/다크 모드 토글, `/api/market` 1분 간격 조회
+- `/stocks/[symbol]`: 선택 종목의 2016-01-01 이후 장기 봉차트, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 추천 카드, SML/PER/RSI, 개별 뉴스, 라이트/다크 모드 토글, `/api/stocks/[symbol]` 1분 간격 조회
 - `/loading.tsx`, `/stocks/[symbol]/loading.tsx`: 실데이터 조회 중 loading page 표시
 - `origin/feat/team5-member`의 Groq 뉴스 분석과 10일 뉴스 필터링 커밋을 반영하되, 추가 npm 패키지 없이 native `fetch` 기반 선택 호출로 통합
 
@@ -68,14 +68,16 @@
 - 반응형 미니멀 대시보드 UI
 - SVG 기반 지수 장기 선 그래프, 사각형 마커, 이동평균선, 기간 선택, 줌 슬라이더, 가로 스크롤 탐색
 - SVG 기반 종목 장기 봉차트, 이동평균선, 기간 선택, 줌 슬라이더, 가로 스크롤 탐색
+- 지수/종목 차트와 기간 선택 영역의 가로 스크롤 기능은 유지하되 scrollbar는 숨김
 - 한국 주식 차트 관례에 맞춰 상승 구간은 빨간색, 하락 구간은 파란색 계열로 표시
 - 종목별 상세 라우팅
 - 클릭 가능한 뉴스 링크와 `noopener noreferrer` 적용
-- 교육용 데모 안내 문구
+- 규칙 기반 분석 기준 안내 문구
 - API data/partial data 상태 표시
 - 초기 샘플 initialData 제거와 loading/error 상태 추가
 - 수동 새로고침 버튼과 1분 간격 자동 조회
 - 미국 종목 카탈로그 4개 추가로 총 8개 종목 제공
+- 라이트/다크 테마 토글과 localStorage 기반 테마 유지
 
 ## 실행 방법
 
@@ -103,9 +105,11 @@ cp .env.example .env.local
 - Twelve Data 1차 provider 추가 후 `npm run lint`, `npm run build` 통과
 - `TWELVE_DATA_API_KEY` 미설정 상태에서 기존 `localhost:3000`의 `/api/market` 응답 `source: partial`, `indexCode: FRED:SP500`, `newsCount: 6` 확인
 - 종목 장기 차트, 공통 기간 옵션, 조회 문구 변경 후 `npm run lint`, `npm run build` 통과
+- 라이트/다크 테마 토글 추가 후 `npm run lint`, `git diff --check`, `npm run build` 통과
+- 모든 차트/기간 선택 스크롤 영역 scrollbar hide 적용 후 `npm run lint`, `git diff --check`, `npm run build` 통과
 
 ## 남은 개선 사항
 
-- 발표 주제별 종목 필터와 섹터 그룹 표시
+- 관심 주제별 종목 필터와 섹터 그룹 표시
 - 정적 카탈로그 명칭을 실제 데이터 소스 구조에 맞춰 분리
-- 추천 점수 계산 기준을 발표용 설명 슬라이드와 맞춰 조정
+- 추천 점수 계산 기준을 분석 기준 문서와 맞춰 조정

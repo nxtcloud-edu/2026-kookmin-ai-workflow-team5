@@ -7,6 +7,7 @@ import { LoadingState } from "@/components/LoadingState";
 import { MetricCard } from "@/components/MetricCard";
 import { NewsList } from "@/components/NewsList";
 import { RecommendationCard } from "@/components/RecommendationCard";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { VolumeCard } from "@/components/VolumeCard";
 import { formatPercent, formatUSD } from "@/lib/format";
 import type { StockPayload } from "@/lib/marketService";
@@ -156,9 +157,12 @@ export function StockDetailClient({ symbol }: StockDetailClientProps) {
           <h1>{stock.name}</h1>
           <p>{stock.symbol}</p>
         </div>
-        <div className="detailPrice">
-          <strong>{formatUSD(stock.currentPrice)}</strong>
-          <span className={changeClass}>{formatPercent(stock.priceChangePercent)}</span>
+        <div className="detailActions">
+          <ThemeToggle />
+          <div className="detailPrice">
+            <strong>{formatUSD(stock.currentPrice)}</strong>
+            <span className={changeClass}>{formatPercent(stock.priceChangePercent)}</span>
+          </div>
         </div>
       </header>
 

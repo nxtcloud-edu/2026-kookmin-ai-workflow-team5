@@ -106,7 +106,7 @@ export const marketIndex = {
   changePercent: 0.42,
   updatedAt: "2026-06-30 09:30",
   summary:
-    "AI 인프라 투자와 금리 인하 기대가 대형 기술주 중심의 투자심리를 지지한 데모 데이터입니다.",
+    "AI 인프라 투자와 금리 인하 기대가 대형 기술주 중심의 투자심리를 지지하는 흐름입니다.",
   chart: [
     { label: "6/17", value: 5412.8 },
     { label: "6/18", value: 5398.4 },
@@ -125,7 +125,7 @@ export const systematicNews: NewsItem[] = [
   {
     id: "sys-1",
     title: "미국 장기금리 안정 기대가 성장주 부담을 낮춤",
-    source: "Mock Macro Brief",
+    source: "Macro Brief",
     date: "2026-06-30",
     sentiment: "positive",
     impact: "호재",
@@ -136,7 +136,7 @@ export const systematicNews: NewsItem[] = [
   {
     id: "sys-2",
     title: "달러 강세는 해외 매출 비중이 큰 기업의 환산 이익 부담",
-    source: "Mock FX Desk",
+    source: "FX Desk",
     date: "2026-06-30",
     sentiment: "negative",
     impact: "악재",
@@ -147,7 +147,7 @@ export const systematicNews: NewsItem[] = [
   {
     id: "sys-3",
     title: "AI 인프라 투자 확대로 반도체와 클라우드 수요 기대 지속",
-    source: "Mock Tech Watch",
+    source: "Tech Watch",
     date: "2026-06-29",
     sentiment: "positive",
     impact: "호재",
@@ -211,7 +211,7 @@ export const stocks: Stock[] = [
       {
         id: "AAPL-1",
         title: "서비스 매출 비중 확대가 이익 안정성 기대를 높임",
-        source: "Mock US Equity Brief",
+        source: "US Equity Brief",
         date: "2026-06-30",
         sentiment: "positive",
         impact: "호재",
@@ -222,7 +222,7 @@ export const stocks: Stock[] = [
       {
         id: "AAPL-2",
         title: "스마트폰 교체 주기 장기화는 단기 성장 부담",
-        source: "Mock Device Tracker",
+        source: "Device Tracker",
         date: "2026-06-29",
         sentiment: "negative",
         impact: "악재",
@@ -285,7 +285,7 @@ export const stocks: Stock[] = [
       {
         id: "MSFT-1",
         title: "클라우드 AI 수요가 장기 성장 기대를 지지",
-        source: "Mock Cloud Note",
+        source: "Cloud Note",
         date: "2026-06-30",
         sentiment: "positive",
         impact: "호재",
@@ -296,7 +296,7 @@ export const stocks: Stock[] = [
       {
         id: "MSFT-2",
         title: "AI 인프라 투자 비용 증가는 마진 확인 요인",
-        source: "Mock Margin Watch",
+        source: "Margin Watch",
         date: "2026-06-28",
         sentiment: "negative",
         impact: "악재",
@@ -359,7 +359,7 @@ export const stocks: Stock[] = [
       {
         id: "NVDA-1",
         title: "데이터센터 GPU 수요가 실적 기대를 견인",
-        source: "Mock Semiconductor Note",
+        source: "Semiconductor Note",
         date: "2026-06-30",
         sentiment: "positive",
         impact: "호재",
@@ -370,7 +370,7 @@ export const stocks: Stock[] = [
       {
         id: "NVDA-2",
         title: "공급망과 고객 집중도는 변동성 요인",
-        source: "Mock Supply Watch",
+        source: "Supply Watch",
         date: "2026-06-29",
         sentiment: "negative",
         impact: "악재",
@@ -433,7 +433,7 @@ export const stocks: Stock[] = [
       {
         id: "TSLA-1",
         title: "자율주행 소프트웨어 기대가 장기 성장 서사를 지지",
-        source: "Mock Auto Tech Brief",
+        source: "Auto Tech Brief",
         date: "2026-06-30",
         sentiment: "positive",
         impact: "호재",
@@ -444,7 +444,7 @@ export const stocks: Stock[] = [
       {
         id: "TSLA-2",
         title: "전기차 가격 경쟁은 단기 마진 부담",
-        source: "Mock EV Watch",
+        source: "EV Watch",
         date: "2026-06-28",
         sentiment: "negative",
         impact: "악재",
@@ -502,7 +502,7 @@ export const stocks: Stock[] = [
       {
         id: "GOOGL-1",
         title: "AI 검색 기능 확대가 광고와 클라우드 기대를 지지",
-        source: "Mock Platform Brief",
+        source: "Platform Brief",
         date: "2026-06-30",
         sentiment: "positive",
         impact: "호재",
@@ -513,7 +513,7 @@ export const stocks: Stock[] = [
       {
         id: "GOOGL-2",
         title: "플랫폼 규제와 광고 경기 둔화는 확인 요인",
-        source: "Mock Regulation Watch",
+        source: "Regulation Watch",
         date: "2026-06-28",
         sentiment: "negative",
         impact: "악재",
@@ -571,7 +571,7 @@ export const stocks: Stock[] = [
       {
         id: "AMZN-1",
         title: "AWS 수요와 리테일 효율화가 이익 개선 기대를 높임",
-        source: "Mock Retail Cloud Note",
+        source: "Retail Cloud Note",
         date: "2026-06-30",
         sentiment: "positive",
         impact: "호재",
@@ -582,7 +582,7 @@ export const stocks: Stock[] = [
       {
         id: "AMZN-2",
         title: "배송비와 소비 둔화는 단기 이익률 부담",
-        source: "Mock Consumer Watch",
+        source: "Consumer Watch",
         date: "2026-06-29",
         sentiment: "negative",
         impact: "악재",
@@ -640,7 +640,7 @@ export const stocks: Stock[] = [
       {
         id: "META-1",
         title: "AI 광고 추천 개선이 매출 효율을 높일 가능성",
-        source: "Mock Ad Tech Brief",
+        source: "Ad Tech Brief",
         date: "2026-06-30",
         sentiment: "positive",
         impact: "호재",
@@ -651,7 +651,7 @@ export const stocks: Stock[] = [
       {
         id: "META-2",
         title: "규제 조사와 인프라 투자는 비용 부담 요인",
-        source: "Mock Platform Risk",
+        source: "Platform Risk",
         date: "2026-06-28",
         sentiment: "negative",
         impact: "악재",
@@ -709,7 +709,7 @@ export const stocks: Stock[] = [
       {
         id: "JPM-1",
         title: "견조한 예대마진과 신용 품질이 방어력을 높임",
-        source: "Mock Bank Brief",
+        source: "Bank Brief",
         date: "2026-06-30",
         sentiment: "positive",
         impact: "호재",
@@ -720,7 +720,7 @@ export const stocks: Stock[] = [
       {
         id: "JPM-2",
         title: "상업용 부동산 익스포저와 규제 비용은 부담",
-        source: "Mock Credit Watch",
+        source: "Credit Watch",
         date: "2026-06-29",
         sentiment: "negative",
         impact: "악재",

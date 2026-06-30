@@ -165,7 +165,7 @@ export function CandlestickChart({
       </div>
 
       <div className="chartControls" aria-label="차트 보기 옵션">
-        <div className="segmentedControl" aria-label="표시 기간">
+        <div className="segmentedControl scrollbarHide" aria-label="표시 기간">
           {chartRangeOptions.map((option) => (
             <button
               aria-pressed={rangeKey === option.key}
@@ -207,7 +207,7 @@ export function CandlestickChart({
 
       <div
         aria-label={`${title} 가로 스크롤 차트`}
-        className="chartScrollViewport"
+        className="chartScrollViewport scrollbarHide"
         onWheel={handleChartWheel}
         ref={scrollerRef}
         tabIndex={0}
