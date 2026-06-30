@@ -134,6 +134,10 @@ async function hydrateStocksSequentially() {
 }
 
 async function attachLiveNews(stock: Stock) {
+  if (!isTradableStock(stock)) {
+    return stock;
+  }
+
   const news = await fetchUnsystematicNews(stock.name, stock.symbol).catch(() => []);
 
   return {
@@ -187,25 +191,12 @@ export async function getStockPayload(symbol: string): Promise<StockPayload | nu
   }
 
   if (!isTradableStock(catalogStock)) {
-    const stockNews = await fetchUnsystematicNews(
-      catalogStock.name,
-      catalogStock.symbol
-    ).catch(() => []);
-    const source: DataSource = stockNews.length > 0 ? "live" : "partial";
-
     return {
-      stock: {
-        ...catalogStock,
-        highlights: highlightsFromNews(stockNews),
-        news: stockNews
-      },
+      stock: catalogStock,
       recommendation: null,
-      source,
+      source: "partial",
       updatedAt: getTimestamp(),
-      message:
-        stockNews.length > 0
-          ? "Google News RSS에서 조회한 비상장 기업 뉴스입니다."
-          : "비상장 기업이며 현재 조회된 뉴스가 없습니다."
+      message: "비상장 기업이므로 외부 API 조회 없이 기본 기업 정보를 표시합니다."
     };
   }
 

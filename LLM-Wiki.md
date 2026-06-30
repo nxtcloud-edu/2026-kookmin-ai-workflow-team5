@@ -22,7 +22,7 @@
 - `src/lib/mockData.ts`
 - 라우팅, 종목명, 지표 설명에 필요한 정적 카탈로그
 - Apple, Microsoft, NVIDIA, Tesla, Alphabet, Amazon, Meta Platforms, JPMorgan Chase 상장 종목 식별자
-- SpaceX는 상장 티커가 없는 비상장 관심 기업으로 `SPACEX` 라우트 식별자를 사용하고 가격 API 조회 대상에서 제외
+- SpaceX는 상장 티커가 없는 비상장 관심 기업으로 `SPACEX` 라우트 식별자를 사용하고 외부 API 조회 대상에서 제외
 - 화면 표시 가격, 차트, 뉴스는 API/RSS 조회 성공값만 사용
 - 유지 대상: 종목 라우팅, 기업명, 시장/섹터, PER/SML 기본 지표, API 가격 데이터 산출 전 기본 타입 구조
 - 삭제 대상: 사용처가 없는 정적 공포탐욕 객체, Google News RSS로 대체된 정적 체계적 뉴스 배열, 미사용 CSS 배지 클래스
@@ -41,7 +41,7 @@
 - `src/lib/news.ts`: Google News RSS 조회와 RSS XML 파싱
 - `src/lib/groq.ts`: `GROQ_API_KEY`가 있을 때만 Groq 뉴스 분류/요약을 선택 실행
 - `src/lib/marketService.ts`: 실데이터와 캐시를 합성하고 실패 항목은 숨김
-- SpaceX는 Twelve Data/Alpha Vantage 가격 API를 호출하지 않고 Google News RSS 기반 뉴스만 표시
+- SpaceX는 Twelve Data/Alpha Vantage 가격 API와 Google News RSS를 호출하지 않고 기본 기업 정보만 표시
 - 클라이언트 컴포넌트는 1분 간격으로 API route를 다시 호출
 - FRED S&P 500 종가는 서버 메모리에 30분 캐시
 - Vercel production에서는 `FRED_API_KEY` 기반 공식 FRED API로 S&P 500 지수를 조회
@@ -67,7 +67,7 @@
 
 - `/`: FRED S&P 500 장기 선 그래프, 사각형 마커, 이동평균선, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 시장 공통 뉴스, 종목 카드 목록, 라이트/다크 모드 토글, `/api/market` 1분 간격 조회
 - `/stocks/[symbol]`: 선택 종목의 2016-01-01 이후 장기 봉차트, `전체/5년/1년/6개월/3개월` 기간 선택, 줌/가로 스크롤 탐색, 추천 카드, SML/PER/RSI, 개별 뉴스, 라이트/다크 모드 토글, `/api/stocks/[symbol]` 1분 간격 조회
-- `/stocks/SPACEX`: 비상장 기업 안내, 가격 지표 미제공 설명, Google News RSS 기반 개별 뉴스와 위험 분석 표시
+- `/stocks/SPACEX`: 비상장 기업 안내, 가격 지표 미제공 설명, 외부 API 호출 없는 기본 기업 정보와 위험 분석 표시
 - `/loading.tsx`, `/stocks/[symbol]/loading.tsx`: 실데이터 조회 중 loading page 표시
 - `team5.html`: 서비스 소개 페이지와 Vercel 대시보드 QR 접근 영역
 - `origin/feat/team5-member`의 Groq 뉴스 분석과 10일 뉴스 필터링 커밋을 반영하되, 추가 npm 패키지 없이 native `fetch` 기반 선택 호출로 통합
@@ -87,7 +87,7 @@
 - 초기 샘플 initialData 제거와 loading/error 상태 추가
 - 수동 새로고침 버튼과 1분 간격 자동 조회
 - 미국 종목 카탈로그 4개 추가로 총 8개 종목 제공
-- SpaceX 비상장 관심 기업 추가와 가격 API 제외 처리
+- SpaceX 비상장 관심 기업 추가와 외부 API 제외 처리
 - 라이트/다크 테마 토글과 localStorage 기반 테마 유지
 - 서비스 소개 HTML에 Vercel 대시보드 QR 코드 접근 영역 추가
 

@@ -22,6 +22,7 @@ export function createRecommendation(stock: Stock): Recommendation {
     const score = clampScore(52 + sentimentScore - (stock.riskScore >= 60 ? 8 : 0));
     const status: RecommendationStatus =
       score >= 68 ? "관심" : score >= 45 ? "관망" : "주의";
+    const hasNews = stock.news.length > 0;
     const summaryByStatus: Record<RecommendationStatus, string> = {
       관심: `${stock.name}은 기업 뉴스 흐름이 우호적이지만 비상장 유동성 리스크를 함께 확인해야 합니다.`,
       관망: `${stock.name}은 공개시장 가격 지표보다 기업 뉴스와 비상장 유동성 리스크를 함께 확인해야 합니다.`,
@@ -34,7 +35,9 @@ export function createRecommendation(stock: Stock): Recommendation {
       summary: summaryByStatus[status],
       reasons: [
         "거래소 상장 주식이 아니어서 주가, PER, RSI, SML 지표를 제공하지 않습니다.",
-        positiveNews > negativeNews
+        !hasNews
+          ? "외부 API 호출 없이 비상장 기업 기본 정보만 표시합니다."
+          : positiveNews > negativeNews
           ? "최근 뉴스 흐름에서 성장 기대 요인이 더 많이 확인됩니다."
           : negativeNews > positiveNews
             ? "최근 뉴스 흐름에서 일정, 규제, 비용 부담을 더 신중히 확인해야 합니다."
