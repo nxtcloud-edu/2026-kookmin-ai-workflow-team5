@@ -1,4 +1,5 @@
-import type { NewsItem } from "./mockData";
+import type { NewsItem, Stock } from "./mockData";
+import type { Recommendation } from "./recommendation";
 
 type GroqResult = {
   impact: "호재" | "악재" | "중립";
@@ -42,7 +43,7 @@ async function callGroq(messages: { role: string; content: string }[]): Promise<
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     body: JSON.stringify({
       messages,
-      model: "llama-3.3-70b-versatile",
+      model: "llama-3.1-8b-instant",
       temperature: 0.1
     }),
     headers: {
@@ -172,4 +173,78 @@ sentiment must be one of: positive, negative, neutral`
       })
     )
   };
+}
+
+export async function analyzeStockWithGroq(stock: Stock): Promise<Recommendation | null> {
+  if (!hasGroqConfig()) return null;
+
+  const newsSummaries = stock.news
+    .slice(0, 6)
+    .map((n, i) => `${i + 1}. [${n.impact}] ${n.title}`)
+    .join("\n");
+
+  const raw = await callGroq([
+    {
+      role: "system",
+      content: `당신은 주식 교육용 AI 분석가입니다. 주어진 종목 데이터를 바탕으로 투자 참고 분석을 제공합니다.
+반드시 아래 JSON 형식만 반환하세요. 마크다운이나 설명 텍스트를 포함하지 마세요.
+
+{
+  "status": "관심" 또는 "관망" 또는 "주의",
+  "score": 0에서 100 사이 정수,
+  "summary": "50자 이내 한국어 한 문장 종합 분석",
+  "reasons": ["이유1 (30자 이내)", "이유2 (30자 이내)", "이유3 (30자 이내)"]
+}
+
+판단 기준:
+- 관심: score 68 이상, 긍정 지표 우세
+- 관망: score 50~67, 긍정·부정 혼재
+- 주의: score 49 이하, 부정 지표 우세`
+    },
+    {
+      role: "user",
+      content: `다음 종목을 분석해주세요:
+
+종목: ${stock.name} (${stock.symbol}) / ${stock.sector}
+현재가: $${stock.currentPrice} (${stock.priceChangePercent >= 0 ? "+" : ""}${stock.priceChangePercent}%)
+리스크 점수: ${stock.riskScore}/100
+변동성: ${stock.volatility}%
+PER: ${stock.metrics.per.value}배 (업종 평균 ${stock.metrics.per.sectorAverage}배)
+RSI: ${stock.metrics.rsi.value}
+SML 알파: ${stock.metrics.sml.alpha >= 0 ? "+" : ""}${stock.metrics.sml.alpha.toFixed(1)}%p (베타 ${stock.metrics.sml.beta})
+
+최근 뉴스:
+${newsSummaries || "뉴스 없음"}`
+    }
+  ]).catch(() => "");
+
+  if (!raw) return null;
+
+  try {
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    const parsed = JSON.parse(jsonMatch?.[0] ?? "{}") as {
+      status?: unknown;
+      score?: unknown;
+      summary?: unknown;
+      reasons?: unknown;
+    };
+
+    if (
+      (parsed.status !== "관심" && parsed.status !== "관망" && parsed.status !== "주의") ||
+      typeof parsed.score !== "number" ||
+      typeof parsed.summary !== "string" ||
+      !Array.isArray(parsed.reasons)
+    ) {
+      return null;
+    }
+
+    return {
+      status: parsed.status,
+      score: Math.max(0, Math.min(100, Math.round(parsed.score))),
+      summary: parsed.summary.slice(0, 80),
+      reasons: (parsed.reasons as unknown[]).slice(0, 3).map((r) => String(r).slice(0, 60))
+    };
+  } catch {
+    return null;
+  }
 }

@@ -137,7 +137,7 @@ export function StockDetailClient({ symbol }: StockDetailClientProps) {
           title={`${stock.name} 가격 차트`}
           tone="stock"
         />
-        <RecommendationCard stock={stock} />
+        <RecommendationCard stock={stock} recommendation={data.recommendation} />
       </section>
 
       <section className="contentSection">
