@@ -1,0 +1,565 @@
+:root {
+  --background: #f7f8fa;
+  --surface: #ffffff;
+  --surface-soft: #f1f4f8;
+  --line: #e4e8ef;
+  --line-strong: #cfd6e0;
+  --text: #17191f;
+  --muted: #667085;
+  --muted-strong: #475467;
+  --green: #0f9f6e;
+  --green-soft: #e8f7f1;
+  --red: #e5484d;
+  --red-soft: #fff0f1;
+  --blue: #2563eb;
+  --blue-soft: #edf3ff;
+  --amber: #b7791f;
+  --amber-soft: #fff7e6;
+  --shadow: 0 18px 45px rgba(22, 30, 46, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--background);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.page {
+  min-height: 100vh;
+}
+
+.shell {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 30px 0 64px;
+}
+
+.topBar,
+.detailHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px 0 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.topBar h1,
+.detailHeader h1 {
+  margin-top: 8px;
+  font-size: 34px;
+  font-weight: 740;
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+.eyebrow {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.demoBadge,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.demoBadge {
+  color: var(--blue);
+  background: var(--blue-soft);
+}
+
+.pill.positive {
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.pill.negative {
+  color: var(--red);
+  background: var(--red-soft);
+}
+
+.pill.neutral {
+  color: var(--amber);
+  background: var(--amber-soft);
+}
+
+.heroGrid,
+.detailGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+  gap: 24px;
+  align-items: stretch;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.chartBlock,
+.indexSummary,
+.recommendationCard {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.chartBlock {
+  padding: 22px;
+}
+
+.chartHeader,
+.sectionHeader,
+.recommendationTop,
+.stockCardTop,
+.newsMeta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.chartHeader h2,
+.sectionHeader h2,
+.recommendationCard h2 {
+  margin-top: 6px;
+  font-size: 22px;
+  line-height: 1.32;
+  letter-spacing: 0;
+}
+
+.rangeLabel {
+  display: flex;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.chartLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chartLegend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendBox {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legendBox.up {
+  background: var(--green);
+}
+
+.legendBox.down {
+  background: var(--red);
+}
+
+.legendLine {
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--blue);
+}
+
+.candleChart {
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+  overflow: visible;
+}
+
+.candleChart .axis {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.candleChart .movingAverage {
+  fill: none;
+  stroke: var(--blue);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.candleChart .wick {
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.candleChart .candle.up .wick,
+.candleChart .candle.up rect {
+  fill: var(--green);
+  stroke: var(--green);
+}
+
+.candleChart .candle.down .wick,
+.candleChart .candle.down rect {
+  fill: var(--red);
+  stroke: var(--red);
+}
+
+.candleChart .candle.flat .wick,
+.candleChart .candle.flat rect {
+  fill: var(--muted);
+  stroke: var(--muted);
+}
+
+.candleChart.stock .movingAverage {
+  stroke: var(--blue);
+}
+
+.indexSummary,
+.recommendationCard {
+  padding: 24px;
+}
+
+.indexSummary strong,
+.detailPrice strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.indexSummary p,
+.recommendationCard p,
+.sectionHeader p,
+.metricCard p,
+.newsItem p,
+.stockCard p,
+.detailHeader p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.indexSummary > p {
+  margin-top: 16px;
+}
+
+.beginnerNote,
+.smallNotice {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 8px;
+  color: var(--muted-strong);
+  background: var(--surface-soft);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.contentSection {
+  padding: 34px 0 0;
+}
+
+.sectionHeader {
+  margin-bottom: 18px;
+}
+
+.sectionHeader > p {
+  max-width: 460px;
+  font-size: 14px;
+}
+
+.newsList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.newsItem,
+.stockCard,
+.metricCard {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.newsItem {
+  display: block;
+  padding: 18px;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.newsItem:hover,
+.stockCard:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+.newsMeta {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.newsItem h3 {
+  margin-top: 14px;
+  font-size: 17px;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
+.newsItem p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.stockGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.stockCard {
+  display: flex;
+  min-height: 310px;
+  flex-direction: column;
+  padding: 18px;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.marketLabel {
+  display: inline-flex;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stockCard h3 {
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.stockPriceLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.stockPriceLine strong {
+  font-size: 20px;
+}
+
+.positiveText {
+  color: var(--green);
+  font-weight: 760;
+}
+
+.negativeText {
+  color: var(--red);
+  font-weight: 760;
+}
+
+.stockFacts {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 0;
+}
+
+.stockFacts div {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.stockFacts dt {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.stockFacts dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.cardSummary {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.detailLink {
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.backLink {
+  display: inline-flex;
+  margin-bottom: 18px;
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.detailPrice {
+  text-align: right;
+}
+
+.recommendationCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.scoreBar {
+  height: 8px;
+  margin: 18px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-soft);
+}
+
+.scoreBar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+}
+
+.recommendationCard ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted-strong);
+  line-height: 1.55;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metricCard {
+  padding: 20px;
+}
+
+.metricCard strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.metricCard p {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.metricCard span {
+  display: block;
+  margin-top: 12px;
+  color: var(--muted-strong);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+@media (max-width: 980px) {
+  .heroGrid,
+  .detailGrid,
+  .newsList,
+  .stockGrid,
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .stockCard {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    width: min(100% - 28px, 1180px);
+    padding-top: 20px;
+  }
+
+  .topBar,
+  .detailHeader,
+  .chartHeader,
+  .sectionHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topBar h1,
+  .detailHeader h1 {
+    font-size: 28px;
+  }
+
+  .chartBlock,
+  .indexSummary,
+  .recommendationCard,
+  .newsItem,
+  .stockCard,
+  .metricCard {
+    border-radius: 8px;
+  }
+
+  .detailPrice {
+    text-align: left;
+  }
+}
