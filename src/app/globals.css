@@ -291,6 +291,15 @@ p {
   margin-top: 14px;
 }
 
+.scrollbarHide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbarHide::-webkit-scrollbar {
+  display: none;
+}
+
 .segmentedControl {
   display: inline-flex;
   min-width: 0;
