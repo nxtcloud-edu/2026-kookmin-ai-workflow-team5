@@ -179,6 +179,56 @@
 
     .hero-cta-outline:hover { border-color: var(--accent); color: var(--blue); }
 
+    .qr-access {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 1rem;
+      align-items: center;
+      max-width: 430px;
+      margin: 2rem auto 0;
+      padding: 0.9rem;
+      text-align: left;
+      background: rgba(22, 26, 36, 0.82);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .qr-access img {
+      width: 104px;
+      height: 104px;
+      padding: 8px;
+      background: #fff;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .qr-access strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .qr-access span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+      word-break: break-all;
+    }
+
+    .qr-access a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    @media (max-width: 520px) {
+      .qr-access {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+      }
+    }
+
     /* TICKER STRIP */
     .ticker-strip {
       background: var(--surface);
@@ -477,11 +527,11 @@
   <div class="nav-logo"><span>AWS</span> Charting</div>
   <div class="nav-right">
     <div class="nav-tag">2026 국민대 AI Workflow Team 5</div>
-    <a class="github-link" href="https://sigebert111-boot-charting.vercel.app/" target="_blank"
+    <a class="github-link" href="https://sigebert111-boot-charting.vercel.app/" target="_blank" rel="noopener noreferrer"
        style="color:var(--blue); border-color:rgba(59,130,246,0.4);">
       ↗ 대시보드
     </a>
-    <a class="github-link" href="https://github.com/nxtcloud-edu/2026-kookmin-ai-workflow-team5" target="_blank">
+    <a class="github-link" href="https://github.com/nxtcloud-edu/2026-kookmin-ai-workflow-team5" target="_blank" rel="noopener noreferrer">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
       GitHub
     </a>
@@ -494,8 +544,19 @@
   <h1>미국 주식 위험,<br /><em>AI가 분석합니다</em></h1>
   <p>체계적 위험과 비체계적 위험을 실시간 뉴스·지표와 AI 분석으로 한눈에 파악하는 교육용 주식 대시보드</p>
   <div class="hero-cta-group">
-    <a class="hero-cta" href="https://sigebert111-boot-charting.vercel.app/" target="_blank">대시보드 바로가기</a>
-    <a class="hero-cta-outline" href="https://github.com/nxtcloud-edu/2026-kookmin-ai-workflow-team5" target="_blank">GitHub 저장소</a>
+    <a class="hero-cta" href="https://sigebert111-boot-charting.vercel.app/" target="_blank" rel="noopener noreferrer">대시보드 바로가기</a>
+    <a class="hero-cta-outline" href="https://github.com/nxtcloud-edu/2026-kookmin-ai-workflow-team5" target="_blank" rel="noopener noreferrer">GitHub 저장소</a>
+  </div>
+  <div class="qr-access" aria-label="대시보드 QR 코드">
+    <img src="https://sigebert111-boot-charting.vercel.app/vercel-qr.svg" alt="AWS Charting 대시보드 QR 코드" width="104" height="104" />
+    <div>
+      <strong>모바일에서 바로 열기</strong>
+      <span>
+        QR 코드는
+        <a href="https://sigebert111-boot-charting.vercel.app/" target="_blank" rel="noopener noreferrer">sigebert111-boot-charting.vercel.app</a>
+        로 연결됩니다.
+      </span>
+    </div>
   </div>
 </div>
 
@@ -671,7 +732,7 @@
   <p><strong>AWS Charting</strong> — 2026 국민대학교 AI Workflow Team 5</p>
   <p style="margin-top:0.4rem;">본 서비스는 교육 목적의 데모이며 실제 투자 조언을 제공하지 않습니다.</p>
   <p style="margin-top:0.75rem;">
-    <a href="https://github.com/nxtcloud-edu/2026-kookmin-ai-workflow-team5" target="_blank"
+    <a href="https://github.com/nxtcloud-edu/2026-kookmin-ai-workflow-team5" target="_blank" rel="noopener noreferrer"
        style="color:var(--blue); text-decoration:none; font-size:0.82rem;">
       github.com/nxtcloud-edu/2026-kookmin-ai-workflow-team5
     </a>
